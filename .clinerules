@@ -1,0 +1,45 @@
+# Authorization Sequence (mandatory)
+
+Applies to: every Next.js Server Action, API Route Handler (app/api),
+and background job (queue worker, cron, scheduled task). Do not skip
+or reorder these steps for any code that touches tenant/org data.
+
+## Trigger detection
+Before writing any handler, confirm whether it touches org-scoped data.
+If yes, the full sequence below is mandatory. If a step cannot be
+satisfied, STOP and surface the gap instead of proceeding.
+
+## Required sequence (in order)
+1. Authenticate the caller.
+   - Server Action / Route: read the Supabase auth session or Clerk
+     session from the request context (server-side only — never trust
+     client-supplied user/org ids).
+2. Resolve the active organization from a server-validated source:
+   the auth session claim, or an org id derived from the URL/route
+   context (e.g. /orgs/[orgId]/...). URL org ids must be validated
+   against the authenticated user's memberships.
+3. Confirm the user belongs to that organization (membership row exists
+   and is not revoked/expired).
+4. Confirm the user's role is sufficient for the action (e.g. owner,
+   admin, member) per a defined role table — never hardcode role
+   checks inline; reference the canonical role list.
+5. Confirm the organization has the required entitlement/plan for the
+   action (feature flag, plan tier, or quota check).
+6. Execute the operation using RLS-protected database access only.
+   All queries must go through a Supabase client bound to the
+   authenticated user (set role / org context) so RLS enforces isolation.
+   No service-role queries that bypass RLS in user-facing handlers.
+7. Create an audit event for sensitive operations (write/mutation,
+   billing change, role/permission change, data export). Audit events
+   must be written in the same transaction or immediately after,
+   capturing: user id, org id, action, target, timestamp, outcome.
+
+## Hard constraints
+- Never execute the operation (step 6) before steps 1–5 pass.
+- Never accept org id, user id, or role from the client request body
+  as authoritative — treat as hints to be validated server-side.
+- If existing code does not follow this sequence, refactor it to match
+  before adding new functionality on top of it. Flag deviations in your
+  response rather than silently leaving them.
+- Service-role (bypass-RLS) access is allowed only in admin/background
+  jobs with an explicit, audited org context — never in user request paths.

@@ -14,7 +14,14 @@ async function main() {
   await prisma.opportunity.deleteMany()
   await prisma.athlete.deleteMany()
   await prisma.brand.deleteMany()
+  await prisma.invitation.deleteMany()
+  await prisma.usageEvent.deleteMany()
+  await prisma.aiRun.deleteMany()
+  await prisma.project.deleteMany()
+  await prisma.subscription.deleteMany()
+  await prisma.entitlement.deleteMany()
   await prisma.user.deleteMany()
+  await prisma.organization.deleteMany({ where: { slug: { startsWith: 'carter-athletics-demo' } } })
 
   const passwordHash = await bcryptHash(DEMO_PASSWORD, 10)
 
@@ -121,6 +128,88 @@ async function main() {
       entityId: deal1.id,
       actorId: athleteUser.id,
       details: `Created deal "${deal1.title}" with payout $${deal1.amount}`,
+    },
+  })
+
+  const demoOrg = await prisma.organization.create({
+    data: {
+      name: 'Carter Athletics',
+      slug: 'carter-athletics-demo',
+      workspaceType: 'ATHLETE_STUDIO',
+      createdById: athleteUser.id,
+      memberships: {
+        create: { userId: athleteUser.id, role: 'OWNER' },
+      },
+      subscription: {
+        create: {
+          stripeCustomerId: 'cus_demo',
+          stripeSubscriptionId: 'sub_demo',
+          stripePriceId: 'price_starter',
+          status: 'ACTIVE',
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      },
+      entitlement: {
+        create: {
+          plan: 'STARTER',
+          seatsLimit: 3,
+          aiCreditsMonthly: 100,
+          aiCreditsUsed: 5,
+          modules: { studio: true, content: true, media: true },
+        },
+      },
+      invitations: {
+        create: {
+          email: 'creator@carterathletics.com',
+          role: 'MEMBER',
+          tokenHash: 'invite-demo',
+          status: 'ACTIVE',
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          invitedById: athleteUser.id,
+        },
+      },
+      projects: {
+        create: {
+          name: 'Fall Campaign',
+          slug: 'fall-campaign',
+          status: 'ACTIVE',
+          ownerUserId: athleteUser.id,
+          metadata: { kind: 'campaign', deliverables: 3 },
+        },
+      },
+      usageEvents: {
+        create: {
+          userId: athleteUser.id,
+          eventType: 'AI_CREDIT_CONSUMED',
+          quantity: 1,
+          metadata: { aiRunKind: 'draft' },
+        },
+      },
+      aiRuns: {
+        create: {
+          userId: athleteUser.id,
+          status: 'SUCCEEDED',
+          kind: 'draft',
+          model: 'gpt-4o',
+          inputTokens: 1200,
+          outputTokens: 300,
+          cost: 0.012,
+          startedAt: new Date(),
+          completedAt: new Date(),
+        },
+      },
+    },
+  })
+
+  await prisma.auditLog.create({
+    data: {
+      action: 'ORGANIZATION_CREATED',
+      entityType: 'Organization',
+      entityId: demoOrg.id,
+      actorId: athleteUser.id,
+      organizationId: demoOrg.id,
+      details: 'Created demo tenant Carter Athletics (ATHLETE_STUDIO)',
     },
   })
 

@@ -1,4 +1,4 @@
-﻿-- RLS bootstrap for The Blueprint.
+-- RLS bootstrap for The Blueprint.
 -- Executed by scripts/apply-rls.ts (via npm run db:rls) AFTER `prisma db push`.
 -- Statements are split on ';' by the script: do NOT put semicolons inside string literals here.
 -- The app role (app_user) must never own tables or be superuser: superusers and owners bypass RLS.
@@ -32,7 +32,7 @@ ALTER TABLE "Deal" FORCE ROW LEVEL SECURITY;
 ALTER TABLE "AuditLog" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "AuditLog" FORCE ROW LEVEL SECURITY;
 
-DROP FUNCTION IF EXISTS app_user_role_in(text);
+DROP FUNCTION IF EXISTS app_user_role_in(text) CASCADE;
 CREATE OR REPLACE FUNCTION app_user_role_in(target_organization_id text) RETURNS text
 LANGUAGE sql STABLE SECURITY DEFINER
 SET search_path = public
@@ -111,4 +111,81 @@ CREATE POLICY audit_select_own ON "AuditLog" FOR SELECT
   USING (
     "actorId" = current_setting('app.current_user_id', true)
     OR app_user_role_in("AuditLog"."organizationId") IS NOT NULL
+  );
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "Invitation" TO app_user;
+GRANT SELECT, INSERT, UPDATE ON TABLE "Subscription" TO app_user;
+GRANT SELECT, UPDATE ON TABLE "Entitlement" TO app_user;
+GRANT SELECT, INSERT ON TABLE "UsageEvent" TO app_user;
+GRANT SELECT, INSERT, UPDATE ON TABLE "AiRun" TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "Project" TO app_user;
+
+ALTER TABLE "Invitation" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Invitation" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "Subscription" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Subscription" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "Entitlement" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Entitlement" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "UsageEvent" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "UsageEvent" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AiRun" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "AiRun" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "Project" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Project" FORCE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS invitation_org_scope ON "Invitation";
+CREATE POLICY invitation_org_scope ON "Invitation" FOR ALL
+  USING (
+    app_user_role_in("Invitation"."organizationId") IS NOT NULL
+  )
+  WITH CHECK (
+    app_user_role_in("Invitation"."organizationId") IN ('OWNER', 'ADMIN')
+  );
+
+DROP POLICY IF EXISTS subscription_org_scope ON "Subscription";
+CREATE POLICY subscription_org_scope ON "Subscription" FOR ALL
+  USING (
+    app_user_role_in("Subscription"."organizationId") IS NOT NULL
+  )
+  WITH CHECK (
+    app_user_role_in("Subscription"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS entitlement_org_scope ON "Entitlement";
+CREATE POLICY entitlement_org_scope ON "Entitlement" FOR ALL
+  USING (
+    app_user_role_in("Entitlement"."organizationId") IS NOT NULL
+  )
+  WITH CHECK (
+    app_user_role_in("Entitlement"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS usage_event_org_scope ON "UsageEvent";
+CREATE POLICY usage_event_org_scope ON "UsageEvent" FOR INSERT
+  WITH CHECK (
+    app_user_role_in("UsageEvent"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS usage_event_select ON "UsageEvent";
+CREATE POLICY usage_event_select ON "UsageEvent" FOR SELECT
+  USING (
+    app_user_role_in("UsageEvent"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS ai_run_org_scope ON "AiRun";
+CREATE POLICY ai_run_org_scope ON "AiRun" FOR ALL
+  USING (
+    app_user_role_in("AiRun"."organizationId") IS NOT NULL
+  )
+  WITH CHECK (
+    app_user_role_in("AiRun"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS project_org_scope ON "Project";
+CREATE POLICY project_org_scope ON "Project" FOR ALL
+  USING (
+    app_user_role_in("Project"."organizationId") IS NOT NULL
+    OR "Project"."ownerUserId" = current_setting('app.current_user_id', true)
+  )
+  WITH CHECK (
+    app_user_role_in("Project"."organizationId") IS NOT NULL
   );
