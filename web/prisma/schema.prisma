@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ATHLETE
+  BRAND
+  AGENCY
+  GUARDIAN
+  ADMIN
+}
+
+enum OpportunityStatus {
+  OPEN
+  APPLIED
+  ACCEPTED
+  CLOSED
+}
+
+enum DealStatus {
+  DRAFT
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum WorkspaceType {
+  ATHLETE_STUDIO
+  AGENCY_WORKSPACE
+  GUARDIAN_PORTAL
+}
+
+model User {
+  id                    String   @id @default(uuid())
+  email                 String   @unique
+  name                  String
+  passwordHash          String
+  role                  Role     @default(ATHLETE)
+  currentOrganizationId String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  athlete              Athlete?
+  brand                Brand?
+  sessions             Session[]
+  opportunities        Opportunity[]
+  deals                Deal[]
+  memberships          Membership[]
+  auditLogs            AuditLog[]     @relation("ActorAuditLogs")
+  currentOrganization  Organization?  @relation("CurrentUserOrg", fields: [currentOrganizationId], references: [id], onDelete: SetNull)
+  createdOrganizations Organization[] @relation("CreatedOrganizations")
+}
+
+model Organization {
+  id            String        @id @default(uuid())
+  name          String
+  slug          String        @unique
+  workspaceType WorkspaceType @default(ATHLETE_STUDIO)
+  createdById   String?
+  createdBy     User?         @relation("CreatedOrganizations", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  memberships    Membership[]
+  currentMembers User[]        @relation("CurrentUserOrg")
+  opportunities  Opportunity[]
+  deals          Deal[]
+  auditLogs      AuditLog[]
+}
+
+model Membership {
+  id             String         @id @default(uuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role           MembershipRole @default(MEMBER)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([userId, organizationId])
+}
+
+model Athlete {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  sport              String
+  school             String
+  bio                String?
+  avatarUrl          String?
+  followerCount      Int      @default(0)
+  verificationStatus String   @default("VERIFIED")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  industry  String
+  logoUrl   String?
+  verified  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Opportunity {
+  id             String            @id @default(uuid())
+  title          String
+  brandName      String
+  payout         Float
+  sport          String
+  location       String
+  deadline       String
+  status         OpportunityStatus @default(OPEN)
+  description    String
+  ownerUserId    String?
+  owner          User?             @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization?     @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model Deal {
+  id             String        @id @default(uuid())
+  title          String
+  brandName      String
+  athleteName    String
+  amount         Float
+  status         DealStatus    @default(ACTIVE)
+  stage          String
+  deliverables   Int           @default(1)
+  startDate      String
+  endDate        String
+  ownerUserId    String?
+  owner          User?         @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id             String        @id @default(uuid())
+  action         String
+  entityType     String
+  entityId       String
+  actorId        String?
+  actor          User?         @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: SetNull)
+  details        String?
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+}

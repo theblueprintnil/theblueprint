@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "commandTimeoutSec": 900,
+  "phases": {
+    "inspiration": {
+      "description": "Start with an inspiration design: capture the idea, sketch the screens, scope this iteration",
+      "checklist": [
+        "One-sentence product idea captured",
+        "Main screens described (dashboard, widgets)",
+        "Must-have features for this iteration listed",
+        "Design references and constraints noted"
+      ],
+      "interactive": true,
+      "optional": false,
+      "agentCommand": "/inspire"
+    },
+    "animate": {
+      "description": "Animate (optional): add motion, transitions and micro-interactions",
+      "checklist": [
+        "Page/element transitions added",
+        "Micro-interactions added (hover, loading states)",
+        "Reduced-motion preference respected"
+      ],
+      "interactive": true,
+      "optional": true,
+      "agentCommand": "/animate"
+    },
+    "main-functionality": {
+      "description": "Build the main functionality: dashboard, widgets, core features",
+      "checklist": [
+        "Dashboard shell and layout built",
+        "Primary widget(s) implemented",
+        "Widgets wired to data sources / API routes",
+        "Empty, loading and error states handled"
+      ],
+      "interactive": true,
+      "optional": false,
+      "agentCommand": "/build"
+    },
+    "local-testing": {
+      "description": "Test it locally and iterate: build, unit tests, typecheck",
+      "checklist": [
+        "Production build passes",
+        "Unit tests pass",
+        "Lint and typecheck clean"
+      ],
+      "interactive": false,
+      "optional": false,
+      "command": "cd web && npm run build && npm run test"
+    },
+    "db-testing": {
+      "description": "Push to the DB, test and iterate: start Postgres, migrate, seed",
+      "checklist": [
+        "Local Postgres running (docker compose)",
+        "Migrations apply cleanly",
+        "Seed data loads",
+        "DB integration tests pass"
+      ],
+      "interactive": false,
+      "optional": false,
+      "command": "cd web && npx prisma db push --accept-data-loss --skip-generate && npm run db:rls && npx prisma db seed && set VIBE_DB_TESTS=1&& npm run test"
+    },
+    "authentication": {
+      "description": "Add authentication: login, register, sessions, route protection",
+      "checklist": [
+        "Login and register flows work",
+        "Passwords hashed and sessions secured",
+        "Protected routes redirect unauthenticated users"
+      ],
+      "interactive": true,
+      "optional": false,
+      "agentCommand": "/auth"
+    },
+    "deployment": {
+      "description": "Deploy: ship the build to Netlify (falls back to a build check if the CLI is missing)",
+      "checklist": [
+        "Environment variables set on the host",
+        "Production database reachable",
+        "Deployment succeeds and the site responds"
+      ],
+      "interactive": false,
+      "optional": false,
+      "command": "cd web && netlify deploy --prod",
+      "requires": "netlify",
+      "fallbackCommand": "cd web && npm run build"
+    },
+    "e2e": {
+      "description": "Run E2E tests, polish misc designs and the landing page",
+      "checklist": [
+        "Playwright E2E suite green",
+        "Landing page polished",
+        "Misc design cleanups done"
+      ],
+      "interactive": false,
+      "optional": false,
+      "command": "cd web && npx playwright test"
+    }
+  }
+}
