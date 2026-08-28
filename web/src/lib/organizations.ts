@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { prismaAuth } from './db'
 import { slugFromName } from './slug'
 import type { MembershipRole, WorkspaceType } from '@prisma/client'
+import { DEMO_DURATION_DAYS, PLANS } from './billing/plans'
 
 export interface UserOrganization {
   id: string
@@ -78,8 +79,17 @@ export async function createOrganizationWithOwner(
         slug,
         workspaceType: input.workspaceType,
         createdById: input.userId,
+        demoExpiresAt: new Date(Date.now() + DEMO_DURATION_DAYS * 24 * 60 * 60 * 1000),
         memberships: {
           create: { userId: input.userId, role: 'OWNER' },
+        },
+        entitlement: {
+          create: {
+            plan: PLANS.DEMO.id,
+            seatsLimit: PLANS.DEMO.seatsLimit,
+            aiCreditsMonthly: PLANS.DEMO.aiCreditsMonthly,
+            modules: PLANS.DEMO.modules,
+          },
         },
       },
     })
@@ -95,6 +105,15 @@ export async function createOrganizationWithOwner(
         actorId: input.userId,
         organizationId: organization.id,
         details: `Created organization "${organization.name}" (${organization.workspaceType})`,
+      },
+    })
+    await tx.auditLog.create({
+      data: {
+        action: 'BILLING_DEMO_STARTED',
+        entityType: 'Organization',
+        entityId: organization.id,
+        organizationId: organization.id,
+        details: `Demo plan granted for ${DEMO_DURATION_DAYS} days.`,
       },
     })
     return organization

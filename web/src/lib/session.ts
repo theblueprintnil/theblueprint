@@ -7,6 +7,7 @@ export interface SessionUser {
   email: string
   name: string
   role: string
+  currentOrganizationId: string | null
 }
 export async function getSessionUser(): Promise<SessionUser | null> {
   const store = await cookies()
@@ -26,5 +27,6 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     email: session.user.email,
     name: session.user.name,
     role: session.user.role,
+    currentOrganizationId: session.user.currentOrganizationId ?? null,
   }
 }

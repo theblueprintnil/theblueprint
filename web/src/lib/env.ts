@@ -40,6 +40,61 @@ export const ENV_SPECS: EnvVarSpec[] = [
     tier: 'reserved',
     description: 'Future signing secret for stateless sessions',
   },
+  {
+    name: 'STRIPE_SECRET_KEY',
+    tier: 'reserved',
+    description: 'Stripe API secret key (server-only; never expose to the browser)',
+  },
+  {
+    name: 'STRIPE_WEBHOOK_SECRET',
+    tier: 'reserved',
+    description: 'Stripe webhook signing secret used to verify event signatures',
+  },
+  {
+    name: 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
+    tier: 'reserved',
+    description: 'Stripe publishable key (safe for browser use)',
+  },
+  {
+    name: 'STRIPE_PRICE_STARTER',
+    tier: 'reserved',
+    description: 'Stripe Price ID for the Starter plan',
+  },
+  {
+    name: 'STRIPE_PRICE_GROWTH',
+    tier: 'reserved',
+    description: 'Stripe Price ID for the Growth plan',
+  },
+  {
+    name: 'STRIPE_PRICE_PREMIUM',
+    tier: 'reserved',
+    description: 'Stripe Price ID for the Premium plan',
+  },
+  {
+    name: 'AI_PROVIDER',
+    tier: 'reserved',
+    description: 'Active AI provider key (e.g. "openai", "anthropic", "mock"). Defaults to "mock".',
+  },
+  {
+    name: 'AI_DEFAULT_MODEL',
+    tier: 'reserved',
+    description: 'Default model identifier used when a feature does not specify one.',
+  },
+  {
+    name: 'OPENAI_API_KEY',
+    tier: 'reserved',
+    description: 'OpenAI API key (server-only; never expose to the browser).',
+  },
+  {
+    name: 'ANTHROPIC_API_KEY',
+    tier: 'reserved',
+    description: 'Anthropic API key (server-only; never expose to the browser).',
+  },
+  {
+    name: 'AI_RATE_LIMIT_PER_MINUTE',
+    tier: 'reserved',
+    description: 'Per-organization AI request limit per minute. Defaults to 20.',
+  },
 ]
 
 export function collectEnvIssues(env: Record<string, string | undefined> = process.env): {

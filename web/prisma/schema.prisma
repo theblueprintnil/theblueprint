@@ -74,6 +74,13 @@ enum AiRunStatus {
   FAILED
 }
 
+enum AiApprovalStatus {
+  NOT_REQUIRED
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
 enum ProjectStatus {
   ACTIVE
   ARCHIVED
@@ -111,6 +118,7 @@ model Organization {
   workspaceType WorkspaceType @default(ATHLETE_STUDIO)
   createdById   String?
   createdBy     User?         @relation("CreatedOrganizations", fields: [createdById], references: [id], onDelete: SetNull)
+  demoExpiresAt DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -274,6 +282,18 @@ model Entitlement {
   updatedAt        DateTime       @updatedAt
 }
 
+model WebhookEvent {
+  id        String   @id @default(uuid())
+  source    String
+  eventId   String   @unique
+  type      String
+  payload   Json
+  processedAt DateTime? @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([source, createdAt])
+}
+
 model UsageEvent {
   id             String         @id @default(uuid())
   organizationId String
@@ -290,25 +310,34 @@ model UsageEvent {
 }
 
 model AiRun {
-  id             String       @id @default(uuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String?
-  user           User?        @relation("AiRunActor", fields: [userId], references: [id], onDelete: SetNull)
-  status         AiRunStatus  @default(PENDING)
-  kind           String?
-  model          String
-  inputRef       Json?
-  outputRef      Json?
-  inputTokens    Int          @default(0)
-  outputTokens   Int          @default(0)
-  cost           Float        @default(0)
-  startedAt      DateTime?
-  completedAt    DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                  String           @id @default(uuid())
+  organizationId      String
+  organization        Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId              String?
+  user                User?            @relation("AiRunActor", fields: [userId], references: [id], onDelete: SetNull)
+  status              AiRunStatus      @default(PENDING)
+  kind                String?
+  featureKey          String?
+  model               String
+  promptTemplateVersion String?
+  inputRef            Json?
+  outputRef           Json?
+  inputTokens         Int              @default(0)
+  outputTokens        Int              @default(0)
+  cost                Float            @default(0)
+  policySnapshotId    String?
+  sourceCitations     Json?
+  reviewRequired      Boolean          @default(false)
+  reviewerId          String?
+  approvalStatus      AiApprovalStatus @default(NOT_REQUIRED)
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
   @@index([organizationId, createdAt])
+  @@index([organizationId, featureKey, createdAt])
+  @@index([reviewRequired, approvalStatus])
 }
 
 model Project {
