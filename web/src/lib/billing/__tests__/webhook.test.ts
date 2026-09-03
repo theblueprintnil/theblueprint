@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+type MockTx = {
+  entitlement: { upsert: ReturnType<typeof vi.fn> }
+  subscription: { update: ReturnType<typeof vi.fn> }
+  auditLog: { create: ReturnType<typeof vi.fn> }
+}
+
 const h = vi.hoisted(() => {
   const state = {
     processedEventIds: new Set<string>(),
@@ -7,7 +13,7 @@ const h = vi.hoisted(() => {
     entitlements: new Map<string, { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] }>(),
     auditLogs: [] as Array<{ action: string; organizationId: string }>,
     webhookEvents: [] as Array<{ eventId: string; type: string }>,
-    tx: null as null | Record<string, ReturnType<typeof vi.fn>>,
+    tx: null as null | MockTx,
   }
   return state
 })
@@ -90,16 +96,16 @@ beforeEach(() => {
         })
         return undefined
       }),
-    } as any,
+    },
     subscription: {
       update: vi.fn(async () => undefined),
-    } as any,
+    },
     auditLog: {
       create: vi.fn(async ({ data }: { data: { action: string; organizationId: string } }) => {
         h.auditLogs.push({ action: data.action, organizationId: data.organizationId })
         return undefined
       }),
-    } as any,
+    },
   }
 })
 

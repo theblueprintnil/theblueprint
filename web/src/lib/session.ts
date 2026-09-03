@@ -1,6 +1,5 @@
-import { cookies } from 'next/headers'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { prismaAuth } from './db'
-import { hashToken, SESSION_COOKIE } from './auth'
 
 export interface SessionUser {
   id: string
@@ -9,24 +8,51 @@ export interface SessionUser {
   role: string
   currentOrganizationId: string | null
 }
-export async function getSessionUser(): Promise<SessionUser | null> {
-  const store = await cookies()
-  const token = store.get(SESSION_COOKIE)?.value
-  if (!token) return null
-  const session = await prismaAuth.session.findUnique({
-    where: { tokenHash: hashToken(token) },
-    include: { user: true },
-  })
-  if (!session) return null
-  if (session.expiresAt < new Date()) {
-    await prismaAuth.session.delete({ where: { id: session.id } }).catch(() => undefined)
-    return null
-  }
+
+function toSessionUser(user: {
+  id: string
+  email: string
+  name: string
+  role: string
+  currentOrganizationId: string | null
+}): SessionUser {
   return {
-    id: session.user.id,
-    email: session.user.email,
-    name: session.user.name,
-    role: session.user.role,
-    currentOrganizationId: session.user.currentOrganizationId ?? null,
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    currentOrganizationId: user.currentOrganizationId,
   }
 }
+
+export async function getSessionUser(): Promise<SessionUser | null> {
+  try {
+    const { userId } = await auth()
+    if (!userId) return null
+    const clerkUser = await currentUser()
+    if (!clerkUser) return null
+    const primaryEmail =
+      clerkUser.emailAddresses.find((entry) => entry.id === clerkUser.primaryEmailAddressId)
+        ?.emailAddress ??
+      clerkUser.emailAddresses[0]?.emailAddress ??
+      null
+    if (!primaryEmail) return null
+    const email = primaryEmail.toLowerCase()
+    const name =
+      [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ').trim() || email
+    const existing = await prismaAuth.user.findUnique({ where: { email } })
+    if (existing) {
+      return toSessionUser(existing)
+    }
+    const created = await prismaAuth.user
+      .create({
+        data: { email, name, passwordHash: 'clerk-managed' },
+      })
+      .catch(async () => prismaAuth.user.findUnique({ where: { email } }))
+    if (!created) return null
+    return toSessionUser(created)
+  } catch {
+    return null
+  }
+}
+

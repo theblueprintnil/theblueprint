@@ -1,27 +1,32 @@
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import type { ReactNode } from 'react'
+import { Inter, Manrope } from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const manrope = Manrope({
+  variable: '--font-manrope',
   subsets: ['latin'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
 export const metadata: Metadata = {
-  title: 'The Blueprint',
-  description: 'NIL operating platform for athletes and agencies',
+  title: {
+    default: 'The Blueprint — NIL Operating Platform',
+    template: '%s — The Blueprint',
+  },
+  description:
+    'The Blueprint is the two-sided NIL operating platform: an athlete brand studio, a public marketplace, and a brand campaign workspace for compliant deals.',
 }
 
-export default function RootLayout({ children }: LayoutProps<'/'>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className={`${manrope.variable} ${inter.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col">
         <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>

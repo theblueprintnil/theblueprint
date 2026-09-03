@@ -2,10 +2,12 @@ cline -p "
 You are the principal SaaS architect.
 
 Read:
+
 - docs/PRODUCT_BRIEF.md
 - .cline/rules.md
 
 Produce a phased implementation plan for a production-capable multi-tenant AI SaaS using:
+
 - Next.js App Router
 - TypeScript
 - Supabase Auth, Postgres, Storage, and Row-Level Security
@@ -14,6 +16,7 @@ Produce a phased implementation plan for a production-capable multi-tenant AI Sa
 - a provider-agnostic AI service layer
 
 The system needs:
+
 - organization-based multitenancy
 - invitations and role-based access control
 - demo, starter, growth, and premium entitlements
@@ -26,6 +29,7 @@ The system needs:
 
 Do not write code yet.
 Return:
+
 1. Architecture diagram in Mermaid
 2. Database entities and relationships
 3. API/route inventory

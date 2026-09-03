@@ -93,7 +93,7 @@ export function BillingPanel({
       if (!res.ok || !data?.url) {
         throw new Error(data?.error ?? 'Unable to start checkout.')
       }
-      window.location.href = data.url
+      window.location.assign(data.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Checkout failed.')
       setLoadingPlan(null)
@@ -109,7 +109,7 @@ export function BillingPanel({
       if (!res.ok || !data?.url) {
         throw new Error(data?.error ?? 'Unable to open the billing portal.')
       }
-      window.location.href = data.url
+      window.location.assign(data.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Portal failed.')
       setPortalLoading(false)

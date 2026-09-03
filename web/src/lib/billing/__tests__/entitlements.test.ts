@@ -1,11 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+type MockTx = {
+  entitlement: { upsert: ReturnType<typeof vi.fn> }
+  organization: { update: ReturnType<typeof vi.fn> }
+  auditLog: { create: ReturnType<typeof vi.fn> }
+}
+
 const h = vi.hoisted(() => {
   const state = {
     entitlements: new Map<string, { plan: string; seatsLimit: number; aiCreditsMonthly: number; aiCreditsUsed: number; modules: string[] }>(),
     organizations: new Map<string, { demoExpiresAt: Date | null; subscription: { status: string; currentPeriodEnd: Date | null; trialEnd: Date | null; cancelAtPeriodEnd: boolean } | null }>(),
     auditLogs: [] as Array<{ action: string; organizationId: string }>,
-    tx: null as null | any,
+    tx: null as null | MockTx,
   }
   return state
 })
@@ -68,14 +74,14 @@ beforeEach(() => {
   h.organizations.clear()
   h.auditLogs = []
   h.tx = {
-    entitlement: { upsert: vi.fn(async () => undefined) } as any,
-    organization: { update: vi.fn(async () => undefined) } as any,
+    entitlement: { upsert: vi.fn(async () => undefined) },
+    organization: { update: vi.fn(async () => undefined) },
     auditLog: {
       create: vi.fn(async ({ data }: { data: { action: string; organizationId: string } }) => {
         h.auditLogs.push({ action: data.action, organizationId: data.organizationId })
         return undefined
       }),
-    } as any,
+    },
   }
 })
 

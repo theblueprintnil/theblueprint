@@ -1,18 +1,23 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const SESSION_COOKIE = 'blueprint_session'
+const isProtectedRoute = createRouteMatcher(['/app/:path*', '/dashboard/:path*', '/admin/:path*'])
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE)?.value
-  if (!token) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('next', request.nextUrl.pathname)
+export default clerkMiddleware(async (auth, req: NextRequest) => {
+  const { userId } = await auth()
+  if (!userId && isProtectedRoute(req)) {
+    const loginUrl = new URL('/login', req.url)
+    loginUrl.searchParams.set('next', req.nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
   }
   return NextResponse.next()
-}
+})
 
 export const config = {
-  matcher: ['/app/:path*'],
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
 }
+
