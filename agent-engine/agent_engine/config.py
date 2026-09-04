@@ -1,0 +1,25 @@
+from functools import lru_cache
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    database_url: str = "postgresql://postgres:postgres@localhost:5433/blueprint"
+    redis_url: str = "redis://localhost:6379/0"
+    celery_task_always_eager: bool = False
+
+    omni_route_base_url: str = "https://omniroute.example.com/v1"
+    omni_route_api_key: str = "YOUR_OMNIROUTE_API_KEY"
+    omni_route_deepseek_model: str = "deepseek-chat"
+    omni_route_zai_model: str = "glm-4-plus"
+    llm_timeout_seconds: float = 60.0
+
+    agent_api_token: str = "YOUR_AGENT_API_TOKEN"
+    agent_publish_endpoint: str | None = None
+
+
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    return Settings()

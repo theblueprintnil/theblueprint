@@ -95,6 +95,16 @@ export const ENV_SPECS: EnvVarSpec[] = [
     tier: 'reserved',
     description: 'Per-organization AI request limit per minute. Defaults to 20.',
   },
+  {
+    name: 'AGENT_SERVICE_URL',
+    tier: 'reserved',
+    description: 'Base URL of the agent-engine JSON-RPC gateway (e.g. http://localhost:8100).',
+  },
+  {
+    name: 'AGENT_SERVICE_TOKEN',
+    tier: 'reserved',
+    description: 'Shared bearer token used to authenticate Server Action calls to the agent gateway.',
+  },
 ]
 
 export function collectEnvIssues(env: Record<string, string | undefined> = process.env): {

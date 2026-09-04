@@ -1,4 +1,11 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: blueprint-redis
+    restart: always
+    ports:
+      - '6379:6379'
+
   postgres:
     image: postgres:16-alpine
     container_name: blueprint-db

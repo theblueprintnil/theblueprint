@@ -81,6 +81,27 @@ enum AiApprovalStatus {
   REJECTED
 }
 
+enum AgentGraphKind {
+  NIL_GENERATION
+}
+
+enum AgentExecutionStatus {
+  QUEUED
+  RUNNING
+  PENDING_APPROVAL
+  APPROVED
+  REVISION_REQUESTED
+  PUBLISHED
+  FAILED
+}
+
+enum RiskSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 enum ProjectStatus {
   ACTIVE
   ARCHIVED
@@ -109,6 +130,7 @@ model User {
   usageEvents          UsageEvent[]    @relation("UsageEventActor")
   aiRuns               AiRun[]         @relation("AiRunActor")
   projectsOwned        Project[]       @relation("ProjectOwner")
+  agentTaskReviews     AgentTaskExecution[] @relation("AgentTaskReviewer")
 }
 
 model Organization {
@@ -129,10 +151,11 @@ model Organization {
   auditLogs      AuditLog[]
   invitations    Invitation[]
   projects       Project[]
-  usageEvents    UsageEvent[]
-  aiRuns         AiRun[]
-  subscription   Subscription?
-  entitlement    Entitlement?
+  usageEvents         UsageEvent[]
+  aiRuns              AiRun[]
+  agentTaskExecutions AgentTaskExecution[]
+  subscription        Subscription?
+  entitlement         Entitlement?
 }
 
 model Membership {
@@ -161,6 +184,8 @@ model Athlete {
   verificationStatus String   @default("VERIFIED")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+
+  agentTaskExecutions AgentTaskExecution[]
 }
 
 model Brand {
@@ -355,4 +380,32 @@ model Project {
 
   @@unique([organizationId, slug])
   @@index([organizationId])
+}
+
+model AgentTaskExecution {
+  id                 String                @id @default(uuid())
+  organizationId     String
+  organization       Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  athleteId          String
+  athlete            Athlete               @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  graphKind          AgentGraphKind        @default(NIL_GENERATION)
+  threadId           String
+  status             AgentExecutionStatus  @default(QUEUED)
+  complianceScore    Float?
+  complianceFlags    Json?
+  captions           Json?
+  inputRef           Json?
+  reviewerId         String?
+  reviewer           User?                 @relation("AgentTaskReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  reviewerFeedback   String?
+  publishedPostUrl   String?
+  errorMessage       String?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  @@unique([organizationId, threadId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
 }

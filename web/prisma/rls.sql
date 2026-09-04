@@ -189,3 +189,29 @@ CREATE POLICY project_org_scope ON "Project" FOR ALL
   WITH CHECK (
     app_user_role_in("Project"."organizationId") IS NOT NULL
   );
+
+GRANT SELECT, INSERT, UPDATE ON TABLE "AgentTaskExecution" TO app_user;
+
+ALTER TABLE "AgentTaskExecution" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "AgentTaskExecution" FORCE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS agent_task_select ON "AgentTaskExecution";
+CREATE POLICY agent_task_select ON "AgentTaskExecution" FOR SELECT
+  USING (
+    app_user_role_in("AgentTaskExecution"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS agent_task_insert ON "AgentTaskExecution";
+CREATE POLICY agent_task_insert ON "AgentTaskExecution" FOR INSERT
+  WITH CHECK (
+    app_user_role_in("AgentTaskExecution"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS agent_task_review_update ON "AgentTaskExecution";
+CREATE POLICY agent_task_review_update ON "AgentTaskExecution" FOR UPDATE
+  USING (
+    app_user_role_in("AgentTaskExecution"."organizationId") IN ('OWNER', 'ADMIN')
+  )
+  WITH CHECK (
+    app_user_role_in("AgentTaskExecution"."organizationId") IN ('OWNER', 'ADMIN')
+  );

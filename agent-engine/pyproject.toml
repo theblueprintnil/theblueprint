@@ -1,0 +1,10 @@
+[project]
+name = "blueprint-agent-engine"
+version = "0.1.0"
+description = "LangGraph + Celery agent engine for The Blueprint NIL content generation and compliance."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
