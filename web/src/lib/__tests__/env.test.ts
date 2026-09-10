@@ -21,6 +21,15 @@ describe('collectEnvIssues', () => {
     expect(issues.missingCritical.map((v) => v.name)).toEqual(['DATABASE_URL', 'APP_DB_PASSWORD'])
     expect(issues.missingReserved.map((v) => v.name)).toContain('NEXT_PUBLIC_SUPABASE_URL')
   })
+
+  it('treats the Clerk keys as critical auth dependencies', () => {
+    const clerkSpecs = ENV_SPECS.filter((v) => v.name.toLowerCase().includes('clerk'))
+    expect(clerkSpecs.map((v) => v.name)).toEqual([
+      'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
+      'CLERK_SECRET_KEY',
+    ])
+    expect(clerkSpecs.every((v) => v.tier === 'critical')).toBe(true)
+  })
 })
 
 describe('validateEnv', () => {

@@ -21,6 +21,16 @@ export const ENV_SPECS: EnvVarSpec[] = [
     description: 'Password used by scripts/apply-rls.ts to create/refresh app_user',
   },
   {
+    name: 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
+    tier: 'critical',
+    description: 'Clerk publishable key for browser auth (pk_…); required by clerkMiddleware',
+  },
+  {
+    name: 'CLERK_SECRET_KEY',
+    tier: 'critical',
+    description: 'Clerk secret key for server-side authentication (server-only; never expose to the browser)',
+  },
+  {
     name: 'NEXT_PUBLIC_SUPABASE_URL',
     tier: 'reserved',
     description: 'Supabase project URL (used from Phase 2 onward)',
