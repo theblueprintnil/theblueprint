@@ -1,14 +1,23 @@
 from __future__ import annotations
 
+import os
+
 from celery import Celery
 
 from . import agents_workflow as engine
 from .config import get_settings
-from .schemas import HumanReviewInput, NILBrief
+from .schemas import ExecutionStatus, HumanReviewInput, NILBrief
+from .store import Store
 
 settings = get_settings()
+_store = Store.from_settings(settings)
 
-celery_app = Celery("blueprint_agent", broker=settings.redis_url, backend=settings.redis_url)
+_on_vercel = bool(os.environ.get("VERCEL"))
+celery_app = Celery(
+    "blueprint_agent",
+    broker="vercel://" if _on_vercel else settings.redis_url,
+    backend="vercel-runtime-cache://" if _on_vercel else settings.redis_url,
+)
 celery_app.conf.update(
     task_acks_late=True,
     task_reject_on_worker_lost=True,
@@ -22,6 +31,31 @@ celery_app.conf.update(
 )
 
 
+def _current_status(organization_id: str, execution_id: str) -> str | None:
+    row = _store.get_execution(organization_id, execution_id)
+    if row is None:
+        return None
+    return str(row.get("status"))
+
+
+def _noop_result(organization_id: str, execution_id: str, thread_id: str) -> dict:
+    status = _current_status(organization_id, execution_id)
+    return {
+        "executionId": execution_id,
+        "threadId": thread_id,
+        "tenantId": organization_id,
+        "status": status,
+        "awaitingApproval": status == ExecutionStatus.PENDING_APPROVAL.value,
+        "publishedPostUrl": None,
+        "duplicate": True,
+    }
+
+
+def _already_advanced(organization_id: str, execution_id: str, allowed: set[str]) -> bool:
+    status = _current_status(organization_id, execution_id)
+    return status not in allowed
+
+
 @celery_app.task(name="run_nil_generation_pipeline")
 def run_nil_generation_pipeline(
     organization_id: str,
@@ -29,6 +63,9 @@ def run_nil_generation_pipeline(
     thread_id: str,
     brief: dict,
 ) -> dict:
+    runnable = {ExecutionStatus.QUEUED.value, ExecutionStatus.RUNNING.value}
+    if _already_advanced(organization_id, execution_id, runnable):
+        return _noop_result(organization_id, execution_id, thread_id)
     try:
         brief_model = NILBrief.model_validate(brief)
         return engine.start_generation(
@@ -49,6 +86,9 @@ def resume_nil_pipeline_after_approval(
     thread_id: str,
     review: dict,
 ) -> dict:
+    resumable = {ExecutionStatus.APPROVED.value, ExecutionStatus.REVISION_REQUESTED.value}
+    if _already_advanced(organization_id, execution_id, resumable):
+        return _noop_result(organization_id, execution_id, thread_id)
     try:
         review_model = HumanReviewInput.model_validate(review)
         return engine.resume_generation(
