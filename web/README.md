@@ -1,11 +1,12 @@
 ﻿# The Blueprint — Web App
 
-Phase 1 + Phase 3 of a multi-tenant NIL operating platform: Next.js 16 (App Router, TypeScript strict) with Tailwind CSS v4, Prisma on PostgreSQL, cookie sessions, organization-based multi-tenancy enforced by Postgres RLS, an owner/admin/member/viewer role model, a first-organization onboarding flow, and a 7-day demo + Stripe Billing entitlement system.
+Phase 1 + Phase 3 of a multi-tenant NIL operating platform: Next.js 16 (App Router, TypeScript strict) with Tailwind CSS v4, Prisma on PostgreSQL, Clerk authentication, organization-based multi-tenancy enforced by Postgres RLS, an owner/admin/member/viewer role model, a first-organization onboarding flow, and a 7-day demo + Stripe Billing entitlement system.
 
 ## Prerequisites
 
 - Node.js 22+
 - Docker (for local PostgreSQL)
+- A Clerk application (development instance) for authentication
 - A Stripe account (test mode) for billing
 
 ## Setup
@@ -27,6 +28,8 @@ npx prisma db seed          # demo data
 | `DATABASE_URL`                  | yes      | Privileged Prisma connection used for auth reads, migrations, RLS bootstrap |
 | `DATABASE_URL_APP`              | yes      | Row-level-security-scoped `app_user` connection used for all tenant queries |
 | `APP_DB_PASSWORD`               | yes      | Password applied to the `app_user` role by `npm run db:rls`                 |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | yes  | Clerk publishable key (browser SDK; `pk_…`) — required by `clerkMiddleware` |
+| `CLERK_SECRET_KEY`              | yes      | Clerk secret key (server-only; never expose to the browser)                 |
 | `NEXT_PUBLIC_SUPABASE_URL`      | reserved | Placeholder for the planned Supabase migration (Phase 2+)                   |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | reserved | Placeholder for the Supabase browser client                                 |
 | `SUPABASE_SERVICE_ROLE_KEY`     | reserved | Server-only Supabase key; never expose to the client                        |
@@ -47,7 +50,7 @@ Startup validates that every required variable is present (`src/lib/env.ts`) and
 npm run dev                 # http://localhost:3000
 ```
 
-Flow: `/register` → `/onboarding` (creates your first organization on the 7-day demo plan; you become its OWNER) → `/app/dashboard`. Existing users land in their most recently active organization via the header switcher. Upgrade from `/app/settings/billing`.
+Flow: `/signup` → `/onboarding` (creates your first organization on the 7-day demo plan; you become its OWNER) → `/app/dashboard`. Existing users land in their most recently active organization via the header switcher. Upgrade from `/app/settings/billing`.
 
 ## Stripe billing setup
 
@@ -74,6 +77,26 @@ Flow: `/register` → `/onboarding` (creates your first organization on the 7-da
 7. **Manage billing** — owners can open the Stripe customer portal from the billing page to update cards, invoices, or cancel.
 
 > Never put `STRIPE_SECRET_KEY` or `STRIPE_WEBHOOK_SECRET` in client code. Only `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is safe for the browser.
+
+## Deploy to Vercel
+
+The app deploys to Vercel as a standard Next.js project (Node 22 enforced via `package.json` `engines`).
+
+1. **Create the project** — import the repository in Vercel and set Root Directory to `web/`.
+2. **Provision Postgres** — Supabase is recommended (it matches the `supabase/` SQL foundation in this repo). One-time bootstrap from a workstation against the production database:
+   ```bash
+   npx prisma db push    # create/sync the schema (needs DATABASE_URL to prod)
+   npm run db:rls        # create app_user + apply prisma/rls.sql (needs APP_DB_PASSWORD)
+   ```
+3. **Set environment variables** in Vercel (Production and Preview):
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / `CLERK_SECRET_KEY` — from your Clerk **production** instance, not the development keys.
+   - `DATABASE_URL`, `DATABASE_URL_APP`, `APP_DB_PASSWORD` — prefer the pooled connection strings for runtime traffic; run the bootstrap above against the direct connection.
+   - `NEXT_PUBLIC_APP_URL` — the production URL.
+   - Stripe (when billing goes live): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_PRICE_*`.
+   - Agent orchestration: `AGENT_SERVICE_URL` (deployed agent-engine URL) and `AGENT_SERVICE_TOKEN` (must equal the engine's `AGENT_API_TOKEN`).
+4. **Clerk production checklist** — create a production instance, register the production domain, and add `https://<your-domain>/onboarding` to the allowed redirect URLs.
+5. **Stripe webhook** — create a production endpoint at `https://<your-domain>/api/stripe/webhook` with the events listed in the billing setup above.
+6. **Optional seed** — with `DATABASE_URL` pointing at the production database, `npx prisma db seed` loads the demo tenant.
 
 ## Scripts
 
