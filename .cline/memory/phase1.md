@@ -60,3 +60,21 @@ Stripe, AI features, member invite emails (step 2 stubbed in UI), email verifica
 - `npx prisma db push` (web), `npm run db:rls`, reseed (`npx prisma db seed`).
 - `docker compose up -d` (postgres + redis), then in `agent-engine`: pip install -r requirements.txt, `celery -A agent_engine.tasks worker`, `uvicorn agent_engine.api:app --port 8100`.
 - Add `AGENT_SERVICE_URL`/`AGENT_SERVICE_TOKEN` (== agent-engine `AGENT_API_TOKEN`) and OmniRoute creds to the respective `.env` files.
+
+## 2026-09-10 - Deployment readiness: Clerk env contract, Vercel (web + agent-engine), vault refresh
+
+### What changed (commits 5f5f3d1..ff79392)
+- Clerk keys `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`/`CLERK_SECRET_KEY` added as **critical** EnvVarSpecs in `src/lib/env.ts` (+ test, `.env.example`, README table) - the fail-fast gate now covers auth. bcryptjs removed entirely; `prisma/seed.ts` rewritten as UTF-8 (was UTF-16/BOM -> ESLint "binary" parse error) with `passwordHash: 'clerk-managed'` (matches `session.ts` placeholder). 4 unused-var lint warnings cleared (rls.test opportunityA, orchestrator.test AiError import, zodToJsonShape param, decide() now param). `web/package.json` gained `engines.node >=22`.
+- agent-engine deploys on Vercel per official docs (verified 2026-09-10): `pyproject.toml` needs `[project].dependencies` (Vercel ignores requirements.txt when both exist - .vercelignore excludes requirements.txt), `requires-python >=3.12`, `[tool.vercel] entrypoint = "agent_engine.api:app"` (web), `[[tool.vercel.subscribers]] entrypoint = "worker:app"` (Celery worker -> private queue-triggered function). `tasks.py` picks broker `vercel://` + backend `vercel-runtime-cache://` when env `VERCEL` is set; Redis path untouched for local dev. `vercel dev` (CLI >= 58.9.0) runs both locally.
+- **Redelivery safety (Vercel Queues is at-least-once):** both Celery tasks now pre-check `AgentTaskExecution.status` (run: QUEUED/RUNNING; resume: APPROVED/REVISION_REQUESTED) and return a no-op `duplicate: true` summary otherwise - previously a redelivered task would re-run and `mark_failed` could flip PENDING_APPROVAL/PUBLISHED executions to FAILED. No countdown/eta anywhere (Queues does not defer them). `vercel-poll://` broker is the documented escape hatch for a classic worker elsewhere.
+- Knowledge graph + `docs/blueprint-graph-vault/` refreshed to match code: 32 nodes (30 project + 2 external) / 57 typed relations, README stats fixed, new node "Public site & dashboards" (marketing/marketplace/dashboard/admin routes), stale observations corrected (7-day demo not 14, Vitest 20 files/141 tests, Playwright = 3 Clerk smoke tests, Docker compose includes Redis), `docs/graph-vault` path refs fixed to `docs/blueprint-graph-vault`.
+- `web/README.md` gained a "Deploy to Vercel" section (Root Directory `web/`, Supabase Postgres recommended, bootstrap = prisma db push + db:rls from workstation, Clerk production instance, Stripe webhook at `/api/stripe/webhook`, `AGENT_SERVICE_URL`/`AGENT_SERVICE_TOKEN` wiring).
+
+### Key gotchas discovered
+- Vercel Celery topic naming: named app `blueprint_agent` publishes to `celery-blueprint_agent-<queue>`; a subscriber with no `topics` filter consumes every declared queue - no extra config needed for our single default queue.
+- Tasks must fit the queue-triggered function max duration; `task_time_limit=600` requires maxDuration >= 600s (Pro) or lowering the limit on Hobby.
+- `agent_engine/api.py` gateway pre-checks mirror the task guards (run only when QUEUED; resume only when APPROVED/REVISION_REQUESTED) - keep them in sync if statuses change.
+- Obsidian vault files lagged the MCP graph (NIL-site node had 3 of 9 relations); regenerate from the graph, don't hand-trust the files.
+
+### Validated
+typecheck clean; eslint 0/0; vitest 133 pass + 8 DB-gated skip (141 total, 20 files); `next build` exit 0; agent-engine pytest 7/7 + module import ok (broker resolves redis:// locally).
