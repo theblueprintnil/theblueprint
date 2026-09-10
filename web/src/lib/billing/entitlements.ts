@@ -121,11 +121,7 @@ function normalizeBillingStatus(status: BillingSnapshotStatus): string {
   return map[status] ?? status.toString().toUpperCase()
 }
 
-export function decide(
-  snapshot: EntitlementSnapshot,
-  feature: string,
-  now: Date = new Date(),
-): EntitlementDecision {
+export function decide(snapshot: EntitlementSnapshot, feature: string): EntitlementDecision {
   const status = normalizeBillingStatus(snapshot.status)
 
   if (status === 'DEMO_EXPIRED') {

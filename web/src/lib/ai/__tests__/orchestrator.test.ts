@@ -130,7 +130,7 @@ vi.mock('../providers/registry', () => ({
 }))
 
 import { runAiAction } from '../orchestrator'
-import { AiError, toSafeError } from '../errors'
+import { toSafeError } from '../errors'
 import { ProviderError } from '../provider'
 import { z } from 'zod'
 // Side-effect: register built-in prompt templates.

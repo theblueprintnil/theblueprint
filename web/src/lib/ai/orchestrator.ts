@@ -124,7 +124,7 @@ export async function runAiAction<TInput, TOutput>(
   }
   // Hint the provider with the Zod schema's JSON shape when available.
   if ('_def' in outputSchema) {
-    providerRequest.jsonSchema = zodToJsonShape(outputSchema)
+    providerRequest.jsonSchema = zodToJsonShape()
   }
 
   // 5. Create ai_runs record (PENDING).
@@ -297,7 +297,7 @@ export function estimateCost(inputTokens: number, outputTokens: number, model: s
  * providers. This is intentionally lightweight — the orchestrator always
  * validates the actual response with Zod, so the hint only nudges the model.
  */
-function zodToJsonShape(schema: z.ZodType): Record<string, unknown> {
+function zodToJsonShape(): Record<string, unknown> {
   // We only need a shallow shape hint; Zod v4 exposes `_zod.def` internals but
   // we avoid coupling to them. Feature code can pass a richer schema via the
   // provider request if needed.

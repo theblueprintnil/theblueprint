@@ -10,7 +10,6 @@ const owner = new PrismaClient()
 d('RLS tenant isolation (real Postgres)', () => {
   let userA: { id: string }
   let userB: { id: string }
-  let opportunityA: { id: string }
   let opportunityB: { id: string }
 
   beforeAll(async () => {
@@ -20,7 +19,7 @@ d('RLS tenant isolation (real Postgres)', () => {
     userB = await owner.user.create({
       data: { email: 'rls-b@test.local', name: 'RLS B', passwordHash: 'x', role: 'ATHLETE' },
     })
-    opportunityA = await owner.opportunity.create({
+    await owner.opportunity.create({
       data: {
         title: 'A row',
         brandName: 'Brand',
