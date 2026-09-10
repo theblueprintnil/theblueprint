@@ -1,17 +1,18 @@
 # The Blueprint — Knowledge Graph Vault
 
-Materialized from the persistent Cline memory knowledge graph on **2026-08-30** by `/graphify . --obsidian`.
+Materialized from the persistent Cline memory knowledge graph on **2026-09-10** by `/graphify . --obsidian`.
 
 ## Stats
 
-- 27 nodes (25 project-scoped + 2 linked external)
-- 41 typed relations
+- 32 nodes (30 project-scoped + 2 linked external)
+- 57 typed relations
 
 ## Nodes
 
 - [[The Blueprint - NIL Athlete Promotion Site]]
 - [[The Blueprint - Two-Sided NIL Platform]]
 - [[The Blueprint - Next.js web app]]
+- [[The Blueprint - Public site & dashboards]]
 - [[The Blueprint - Prisma data layer]]
 - [[The Blueprint - Auth & sessions]]
 - [[The Blueprint - Supabase compat seam]]
@@ -29,6 +30,10 @@ Materialized from the persistent Cline memory knowledge graph on **2026-08-30** 
 - [[The Blueprint - AI assist layer]]
 - [[The Blueprint - Onboarding flow]]
 - [[The Blueprint - Authorization sequence rule]]
+- [[The Blueprint - A2A agent engine]]
+- [[The Blueprint - Agent execution data model]]
+- [[The Blueprint - Studio approval UI]]
+- [[The Blueprint - Content pack]]
 - [[The Blueprint - Vitest unit suite]]
 - [[The Blueprint - Playwright E2E]]
 - [[The Blueprint - Vibe Loop workflow]]

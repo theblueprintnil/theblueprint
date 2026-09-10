@@ -21,3 +21,4 @@
 - `persists-in` ← [[The Blueprint - Auth & sessions]]
 - `persists-in` ← [[The Blueprint - Multi-tenancy model]]
 - `wraps` ← [[The Blueprint - Supabase compat seam]]
+- `reads-writes` ← [[The Blueprint - Public site & dashboards]]

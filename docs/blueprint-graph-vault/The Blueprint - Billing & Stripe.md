@@ -7,7 +7,7 @@
 - src/lib/billing/{plans,entitlements,stripe,webhook}.ts; plan tiers DEMO/STARTER/GROWTH/PREMIUM; entitlement snapshot = plan, seats limit, ai credits monthly/used, modules, billing status, demo expiry
 - Stripe checkout/portal/status API routes; webhook verifies HMAC signature and dedupes via WebhookEvent.eventId unique constraint
 - Subscription model stores stripeCustomerId/stripeSubscriptionId/stripePriceId + BillingStatus; Entitlement is 1:1 with organization
-- seedDemoEntitlement upserts a DEMO entitlement and sets organization.demoExpiresAt (14-day demo window)
+- seedDemoEntitlement upserts a DEMO entitlement and sets organization.demoExpiresAt (DEMO_DURATION_DAYS = 7 in plans.ts; 7-day no-card window)
 
 ## Relations
 

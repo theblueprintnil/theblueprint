@@ -5,6 +5,7 @@
 ## Observations
 
 - Root docker-compose.yml: postgres:16-alpine, container blueprint-db, host port 5433:5432, named volume postgres_data
+- Root docker-compose.yml also runs Redis (service redis on :6379) as the local Celery broker/backend for agent-engine
 - supabase/migrations mirror the Prisma data model plus RLS for parity: 20260826 tenant core/metering/policies/seed, 20260827 ai runs orchestration
 
 ## Relations

@@ -19,3 +19,4 @@
 
 - `relies-on` ← [[The Blueprint - Auth & sessions]]
 - `tests` ← [[The Blueprint - Vitest unit suite]]
+- `protected-by` ← [[The Blueprint - Public site & dashboards]]
