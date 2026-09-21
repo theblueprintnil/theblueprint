@@ -75,9 +75,19 @@ export default function BrandsPage() {
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
-            <div key={feature.title} className="card-hover-lift rounded-2xl border border-border bg-white p-7">
+            <div
+              key={feature.title}
+              className="card-hover-lift rounded-2xl border border-border bg-white p-7"
+            >
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-tint text-brand">
-                <svg viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                <svg
+                  viewBox="0 0 20 20"
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  aria-hidden
+                >
                   <rect x="3" y="3" width="14" height="14" rx="3.5" />
                   <path d="M7 10l2.2 2.2L13.5 7.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -93,18 +103,23 @@ export default function BrandsPage() {
         <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">How it works</span>
+              <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+                How it works
+              </span>
               <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">
                 From discovery to disclosure
               </h2>
               <p className="mt-4 leading-relaxed text-muted-foreground">
-                Every step is captured so your compliance team can review the
-                entire lifecycle of a partnership in one place.
+                Every step is captured so your compliance team can review the entire lifecycle of a
+                partnership in one place.
               </p>
             </div>
             <ol className="grid content-center gap-2.5">
               {PROCESS.map(([title, body], index) => (
-                <li key={title} className="flex items-center gap-4 rounded-xl border border-border bg-white px-4 py-3">
+                <li
+                  key={title}
+                  className="flex items-center gap-4 rounded-xl border border-border bg-white px-4 py-3"
+                >
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-tint font-display text-sm font-bold text-brand">
                     {index + 1}
                   </span>
@@ -122,24 +137,41 @@ export default function BrandsPage() {
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">Built for your team</span>
+            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+              Built for your team
+            </span>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">
               Legal, marketing, and finance on the same page
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              Grant your team role-based access: campaign managers run briefs,
-              legal reviews contracts and disclosures, finance tracks budgets,
-              and leadership sees the full pipeline — each with an audit trail.
+              Grant your team role-based access: campaign managers run briefs, legal reviews
+              contracts and disclosures, finance tracks budgets, and leadership sees the full
+              pipeline — each with an audit trail.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-white p-7">
             <h3 className="font-display text-lg font-bold text-ink">Roles you can assign</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex justify-between gap-4"><span>Owner</span><span className="font-semibold text-ink">Full control</span></li>
-              <li className="flex justify-between gap-4"><span>Campaign manager</span><span className="font-semibold text-ink">Briefs & outreach</span></li>
-              <li className="flex justify-between gap-4"><span>Legal / compliance</span><span className="font-semibold text-ink">Contracts & disclosures</span></li>
-              <li className="flex justify-between gap-4"><span>Finance</span><span className="font-semibold text-ink">Budgets & payouts</span></li>
-              <li className="flex justify-between gap-4"><span>Viewer</span><span className="font-semibold text-ink">Read-only</span></li>
+              <li className="flex justify-between gap-4">
+                <span>Owner</span>
+                <span className="font-semibold text-ink">Full control</span>
+              </li>
+              <li className="flex justify-between gap-4">
+                <span>Campaign manager</span>
+                <span className="font-semibold text-ink">Briefs & outreach</span>
+              </li>
+              <li className="flex justify-between gap-4">
+                <span>Legal / compliance</span>
+                <span className="font-semibold text-ink">Contracts & disclosures</span>
+              </li>
+              <li className="flex justify-between gap-4">
+                <span>Finance</span>
+                <span className="font-semibold text-ink">Budgets & payouts</span>
+              </li>
+              <li className="flex justify-between gap-4">
+                <span>Viewer</span>
+                <span className="font-semibold text-ink">Read-only</span>
+              </li>
             </ul>
           </div>
         </div>

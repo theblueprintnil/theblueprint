@@ -6,12 +6,7 @@ import type { BillingStatus, PlanType } from '@prisma/client'
 import type { MembershipRole } from '@/lib/permissions'
 
 export type BillingSnapshotStatus =
-  | BillingStatus
-  | 'demo_active'
-  | 'demo_expired'
-  | 'canceled'
-  | 'unpaid'
-  | 'past_due'
+  BillingStatus | 'demo_active' | 'demo_expired' | 'canceled' | 'unpaid' | 'past_due'
 
 export interface EntitlementSnapshot {
   plan: PlanType
@@ -63,7 +58,11 @@ const STATUS_LABEL: Record<EntitlementSnapshot['status'], string> = {
 
 function formatDate(value: string | null): string {
   if (!value) return '—'
-  return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  return new Date(value).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
 }
 
 export function BillingPanel({
@@ -148,7 +147,8 @@ export function BillingPanel({
               {isDemo ? demoPlan.label : snapshot.plan}
             </p>
             <p className="mt-1 text-sm text-zinc-500">
-              Status: <span className="font-medium text-zinc-700">{STATUS_LABEL[snapshot.status]}</span>
+              Status:{' '}
+              <span className="font-medium text-zinc-700">{STATUS_LABEL[snapshot.status]}</span>
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm">

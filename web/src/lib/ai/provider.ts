@@ -112,10 +112,7 @@ export interface AiProvider {
  * Helper for provider implementations: parse + validate a JSON response with a
  * Zod schema, throwing a typed `ProviderError` on failure.
  */
-export function parseJsonResponse<T>(
-  content: string,
-  schema: z.ZodType<T>,
-): T {
+export function parseJsonResponse<T>(content: string, schema: z.ZodType<T>): T {
   let parsed: unknown
   try {
     parsed = JSON.parse(content)

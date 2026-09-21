@@ -71,13 +71,17 @@ interface StripeCustomerLike {
   metadata?: Record<string, string | undefined>
 }
 
-function readOrganizationIdFromMetadata(metadata: Record<string, string | undefined> | undefined): string | null {
+function readOrganizationIdFromMetadata(
+  metadata: Record<string, string | undefined> | undefined,
+): string | null {
   if (!metadata) return null
   const value = metadata.organizationId ?? metadata.organization_id
   return value && value.trim() !== '' ? value : null
 }
 
-async function resolveOrganizationIdFromCustomer(customer: StripeCustomerLike): Promise<string | null> {
+async function resolveOrganizationIdFromCustomer(
+  customer: StripeCustomerLike,
+): Promise<string | null> {
   const fromMetadata = readOrganizationIdFromMetadata(customer.metadata)
   if (fromMetadata) return fromMetadata
   const sub = await prismaAuth.subscription.findUnique({
@@ -87,7 +91,9 @@ async function resolveOrganizationIdFromCustomer(customer: StripeCustomerLike): 
   return sub?.organizationId ?? null
 }
 
-async function resolveOrganizationIdFromSubscription(subscriptionId: string): Promise<string | null> {
+async function resolveOrganizationIdFromSubscription(
+  subscriptionId: string,
+): Promise<string | null> {
   const sub = await prismaAuth.subscription.findUnique({
     where: { stripeSubscriptionId: subscriptionId },
     select: { organizationId: true },

@@ -22,7 +22,9 @@ export default async function BillingSettingsPage({
     ? {
         ...snapshot,
         demoExpiresAt: snapshot.demoExpiresAt ? snapshot.demoExpiresAt.toISOString() : null,
-        currentPeriodEnd: snapshot.currentPeriodEnd ? snapshot.currentPeriodEnd.toISOString() : null,
+        currentPeriodEnd: snapshot.currentPeriodEnd
+          ? snapshot.currentPeriodEnd.toISOString()
+          : null,
         trialEnd: snapshot.trialEnd ? snapshot.trialEnd.toISOString() : null,
       }
     : null
@@ -58,4 +60,3 @@ export default async function BillingSettingsPage({
     </div>
   )
 }
-

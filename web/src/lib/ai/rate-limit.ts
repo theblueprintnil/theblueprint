@@ -73,7 +73,9 @@ let activeLimiter: RateLimiter | null = null
 export function getRateLimiter(env: Record<string, string | undefined> = process.env): RateLimiter {
   if (activeLimiter) return activeLimiter
   const limit = Number(env.AI_RATE_LIMIT_PER_MINUTE ?? DEFAULT_LIMIT)
-  activeLimiter = new InMemoryRateLimiter(Number.isFinite(limit) && limit > 0 ? limit : DEFAULT_LIMIT)
+  activeLimiter = new InMemoryRateLimiter(
+    Number.isFinite(limit) && limit > 0 ? limit : DEFAULT_LIMIT,
+  )
   return activeLimiter
 }
 

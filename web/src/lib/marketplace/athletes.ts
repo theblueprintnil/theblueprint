@@ -177,4 +177,3 @@ export function initialsFor(name: string): string {
     .map((part) => part[0]?.toUpperCase() ?? '')
     .join('')
 }
-

@@ -8,8 +8,18 @@ export const metadata: Metadata = {
 
 const USERS = [
   { name: 'Jordan Carter', email: 'jordan.carter@state.edu', role: 'ATHLETE', status: 'Verified' },
-  { name: 'Apex Nutrition', email: 'partnerships@apexnutrition.com', role: 'BRAND', status: 'Verified' },
-  { name: 'Priya Sharma', email: 'priya.sharma@eastbridge.edu', role: 'ATHLETE', status: 'Pending' },
+  {
+    name: 'Apex Nutrition',
+    email: 'partnerships@apexnutrition.com',
+    role: 'BRAND',
+    status: 'Verified',
+  },
+  {
+    name: 'Priya Sharma',
+    email: 'priya.sharma@eastbridge.edu',
+    role: 'ATHLETE',
+    status: 'Pending',
+  },
   { name: 'Coastal Wellness', email: 'hello@coastalwellness.com', role: 'BRAND', status: 'Active' },
 ]
 
@@ -56,7 +66,9 @@ export default function AdminDashboardPage() {
                     </span>
                   </td>
                   <td className="py-3.5">
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[user.status] ?? 'bg-muted text-muted-foreground'}`}>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[user.status] ?? 'bg-muted text-muted-foreground'}`}
+                    >
                       {user.status}
                     </span>
                   </td>
@@ -100,7 +112,10 @@ export default function AdminDashboardPage() {
                   <span className="text-muted-foreground">{count}</span>
                 </div>
                 <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full brand-gradient" style={{ width: `${percent}%` }} />
+                  <div
+                    className="h-full rounded-full brand-gradient"
+                    style={{ width: `${percent}%` }}
+                  />
                 </div>
               </li>
             ))}

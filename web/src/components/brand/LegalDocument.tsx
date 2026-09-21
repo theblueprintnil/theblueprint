@@ -14,8 +14,12 @@ export function LegalDocument({ title, updated, intro, sections }: LegalDocument
   return (
     <div className="hero-gradient">
       <div className="mx-auto max-w-3xl px-6 py-20">
-        <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">The Blueprint</span>
-        <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-ink">{title}</h1>
+        <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+          The Blueprint
+        </span>
+        <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-ink">
+          {title}
+        </h1>
         <p className="mt-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Last updated: {updated}
         </p>
@@ -27,7 +31,10 @@ export function LegalDocument({ title, updated, intro, sections }: LegalDocument
                 {index + 1}. {section.heading}
               </h2>
               {section.paragraphs.map((paragraph) => (
-                <p key={paragraph.slice(0, 32)} className="mt-3 leading-relaxed text-muted-foreground">
+                <p
+                  key={paragraph.slice(0, 32)}
+                  className="mt-3 leading-relaxed text-muted-foreground"
+                >
                   {paragraph}
                 </p>
               ))}

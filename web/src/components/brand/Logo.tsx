@@ -45,17 +45,40 @@ export function Logo({ className, tone = 'dark', size = 'md' }: LogoProps) {
           'shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_6px_18px_rgba(0,127,255,0.35)]',
         )}
       >
-        <svg viewBox="0 0 24 24" className={cn('relative z-10 h-1/2 w-1/2 text-white')} fill="currentColor" aria-hidden>
+        <svg
+          viewBox="0 0 24 24"
+          className={cn('relative z-10 h-1/2 w-1/2 text-white')}
+          fill="currentColor"
+          aria-hidden
+        >
           <path d="M6 2h7.2a4.8 4.8 0 1 1 0 9.6H9.6v4.4H6.6V2h-.6zm3 3v3.6h3a1.8 1.8 0 1 0 0-3.6H9z" />
           <rect x="3.4" y="18.2" width="17.2" height="3.4" rx="1.1" />
         </svg>
-        <span className={cn('absolute bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-cyan', s.tick)} />
+        <span
+          className={cn(
+            'absolute bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-cyan',
+            s.tick,
+          )}
+        />
       </span>
       <span className="flex flex-col leading-none">
-        <span className={cn('font-display font-extrabold tracking-tight', s.wordmark, wordColor, shadowClass)}>
+        <span
+          className={cn(
+            'font-display font-extrabold tracking-tight',
+            s.wordmark,
+            wordColor,
+            shadowClass,
+          )}
+        >
           The Blueprint
         </span>
-        <span className={cn('mt-0.5 font-body font-semibold uppercase tracking-[0.28em]', s.cap, capColor)}>
+        <span
+          className={cn(
+            'mt-0.5 font-body font-semibold uppercase tracking-[0.28em]',
+            s.cap,
+            capColor,
+          )}
+        >
           NIL Operating System
         </span>
       </span>

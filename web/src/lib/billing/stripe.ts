@@ -18,7 +18,9 @@ export function getStripe(): Stripe {
 export function stripeWebhookSecret(): string {
   const value = process.env.STRIPE_WEBHOOK_SECRET
   if (!value) {
-    throw new Error('STRIPE_WEBHOOK_SECRET is not set. Configure it in web/.env to receive webhooks.')
+    throw new Error(
+      'STRIPE_WEBHOOK_SECRET is not set. Configure it in web/.env to receive webhooks.',
+    )
   }
   return value
 }

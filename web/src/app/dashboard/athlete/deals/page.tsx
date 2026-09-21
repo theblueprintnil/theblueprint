@@ -8,10 +8,38 @@ export const metadata: Metadata = {
 }
 
 const DEALS = [
-  { title: 'Apex Electrolyte Launch', brand: 'Apex Nutrition', value: '$3,500', status: 'ACTIVE', stage: 'Negotiation', updated: '2h ago' },
-  { title: 'UrbanFit Social Takeover', brand: 'UrbanFit Co.', value: '$1,800', status: 'PENDING', stage: 'Athlete review', updated: '1d ago' },
-  { title: 'TechGear Pro Endorsement', brand: 'TechGear', value: '$5,000', status: 'COMPLETED', stage: 'Closed', updated: '5d ago' },
-  { title: 'Campus Grill Seasonal Spot', brand: 'Campus Grill', value: '$900', status: 'DRAFT', stage: 'Draft', updated: '1w ago' },
+  {
+    title: 'Apex Electrolyte Launch',
+    brand: 'Apex Nutrition',
+    value: '$3,500',
+    status: 'ACTIVE',
+    stage: 'Negotiation',
+    updated: '2h ago',
+  },
+  {
+    title: 'UrbanFit Social Takeover',
+    brand: 'UrbanFit Co.',
+    value: '$1,800',
+    status: 'PENDING',
+    stage: 'Athlete review',
+    updated: '1d ago',
+  },
+  {
+    title: 'TechGear Pro Endorsement',
+    brand: 'TechGear',
+    value: '$5,000',
+    status: 'COMPLETED',
+    stage: 'Closed',
+    updated: '5d ago',
+  },
+  {
+    title: 'Campus Grill Seasonal Spot',
+    brand: 'Campus Grill',
+    value: '$900',
+    status: 'DRAFT',
+    stage: 'Draft',
+    updated: '1w ago',
+  },
 ]
 
 const STATUS_TONES: Record<string, string> = {
@@ -63,7 +91,9 @@ export default function AthleteDealsPage() {
                   <td className="py-3.5 pr-4 text-muted-foreground">{deal.brand}</td>
                   <td className="py-3.5 pr-4 font-display font-extrabold text-ink">{deal.value}</td>
                   <td className="py-3.5 pr-4">
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[deal.status] ?? 'bg-muted text-muted-foreground'}`}>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[deal.status] ?? 'bg-muted text-muted-foreground'}`}
+                    >
                       {deal.status}
                     </span>
                   </td>

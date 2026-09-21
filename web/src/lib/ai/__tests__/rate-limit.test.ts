@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryRateLimiter } from '../rate-limit'
 
-
 describe('InMemoryRateLimiter', () => {
   let limiter: InMemoryRateLimiter
 

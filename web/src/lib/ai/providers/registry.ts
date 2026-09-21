@@ -28,12 +28,16 @@ export function getProvider(key: string): AiProvider {
   return provider
 }
 
-export function getActiveProviderKey(env: Record<string, string | undefined> = process.env): string {
+export function getActiveProviderKey(
+  env: Record<string, string | undefined> = process.env,
+): string {
   const key = (env.AI_PROVIDER ?? 'mock').trim().toLowerCase()
   return key
 }
 
-export function getActiveProvider(env: Record<string, string | undefined> = process.env): AiProvider {
+export function getActiveProvider(
+  env: Record<string, string | undefined> = process.env,
+): AiProvider {
   return getProvider(getActiveProviderKey(env))
 }
 

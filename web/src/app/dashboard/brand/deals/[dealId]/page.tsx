@@ -13,9 +13,21 @@ export async function generateMetadata({ params }: DealWorkspacePageProps): Prom
 }
 
 const MESSAGES = [
-  { from: 'Apex Nutrition', body: 'Hi Jordan — attached v3 of the contract with the revised usage window. Can you confirm the deliverable dates still work?', time: 'Mon 9:14 AM' },
-  { from: 'Jordan Carter', body: 'Dates look good. I shared the updated deliverable calendar with my team — we can lock it in.', time: 'Mon 10:02 AM' },
-  { from: 'Apex Nutrition', body: 'Perfect. We\'ll finalize the disclosure checklist and send the signature request by Wednesday.', time: 'Mon 10:18 AM' },
+  {
+    from: 'Apex Nutrition',
+    body: 'Hi Jordan — attached v3 of the contract with the revised usage window. Can you confirm the deliverable dates still work?',
+    time: 'Mon 9:14 AM',
+  },
+  {
+    from: 'Jordan Carter',
+    body: 'Dates look good. I shared the updated deliverable calendar with my team — we can lock it in.',
+    time: 'Mon 10:02 AM',
+  },
+  {
+    from: 'Apex Nutrition',
+    body: "Perfect. We'll finalize the disclosure checklist and send the signature request by Wednesday.",
+    time: 'Mon 10:18 AM',
+  },
 ]
 
 const MILESTONES = [
@@ -29,10 +41,7 @@ export default async function BrandDealWorkspacePage({ params }: DealWorkspacePa
   const { dealId } = await params
   return (
     <div>
-      <PageHeader
-        title="Deal workspace"
-        description={`Apex Electrolyte Launch · ${dealId}`}
-      >
+      <PageHeader title="Deal workspace" description={`Apex Electrolyte Launch · ${dealId}`}>
         <div className="flex items-center gap-3">
           <span className="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-semibold text-amber-700">
             Contract review
@@ -60,7 +69,9 @@ export default async function BrandDealWorkspacePage({ params }: DealWorkspacePa
                       <span className="text-sm font-semibold text-ink">{message.from}</span>
                       <span className="text-xs text-muted-foreground">{message.time}</span>
                     </div>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{message.body}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {message.body}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -119,15 +130,23 @@ export default async function BrandDealWorkspacePage({ params }: DealWorkspacePa
             <div className="rounded-xl border border-border bg-muted/20 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-ink">NIL Agreement — v3</span>
-                <span className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand">Review</span>
+                <span className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand">
+                  Review
+                </span>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">Uploaded Sep 9 · 8 pages</p>
             </div>
             <div className="mt-4 grid gap-2">
-              <button type="button" className="rounded-full brand-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,127,255,0.32)] transition hover:opacity-90">
+              <button
+                type="button"
+                className="rounded-full brand-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,127,255,0.32)] transition hover:opacity-90"
+              >
                 Request signature
               </button>
-              <button type="button" className="rounded-full border border-border bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-brand/40 hover:text-brand">
+              <button
+                type="button"
+                className="rounded-full border border-border bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-brand/40 hover:text-brand"
+              >
                 Request changes
               </button>
             </div>
@@ -142,7 +161,13 @@ export default async function BrandDealWorkspacePage({ params }: DealWorkspacePa
                 ['State rule check', true],
               ].map(([label, done]) => (
                 <li key={label as string} className="flex items-center gap-2">
-                  {done ? <CheckIcon /> : <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-amber-100 text-[10px] font-bold text-amber-700">!</span>}
+                  {done ? (
+                    <CheckIcon />
+                  ) : (
+                    <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-amber-100 text-[10px] font-bold text-amber-700">
+                      !
+                    </span>
+                  )}
                   {label}
                 </li>
               ))}
@@ -166,7 +191,14 @@ function initials(name: string): string {
 function CheckIcon() {
   return (
     <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700">
-      <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <svg
+        viewBox="0 0 12 12"
+        className="h-2.5 w-2.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        aria-hidden
+      >
         <path d="M2.5 6.5l2.3 2.3 4.7-5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </span>

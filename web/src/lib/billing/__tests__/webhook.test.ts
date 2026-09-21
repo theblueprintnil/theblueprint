@@ -9,8 +9,19 @@ type MockTx = {
 const h = vi.hoisted(() => {
   const state = {
     processedEventIds: new Set<string>(),
-    subscriptions: new Map<string, { organizationId: string; stripeCustomerId: string; stripeSubscriptionId: string; status: string }>(),
-    entitlements: new Map<string, { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] }>(),
+    subscriptions: new Map<
+      string,
+      {
+        organizationId: string
+        stripeCustomerId: string
+        stripeSubscriptionId: string
+        status: string
+      }
+    >(),
+    entitlements: new Map<
+      string,
+      { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] }
+    >(),
     auditLogs: [] as Array<{ action: string; organizationId: string }>,
     webhookEvents: [] as Array<{ eventId: string; type: string }>,
     tx: null as null | MockTx,
@@ -32,33 +43,57 @@ vi.mock('../../db', () => ({
       }),
     },
     subscription: {
-      findUnique: vi.fn(async ({ where }: { where: { stripeSubscriptionId?: string; stripeCustomerId?: string } }) => {
-        if (where.stripeSubscriptionId) {
-          for (const sub of h.subscriptions.values()) {
-            if (sub.stripeSubscriptionId === where.stripeSubscriptionId) return { organizationId: sub.organizationId }
+      findUnique: vi.fn(
+        async ({
+          where,
+        }: {
+          where: { stripeSubscriptionId?: string; stripeCustomerId?: string }
+        }) => {
+          if (where.stripeSubscriptionId) {
+            for (const sub of h.subscriptions.values()) {
+              if (sub.stripeSubscriptionId === where.stripeSubscriptionId)
+                return { organizationId: sub.organizationId }
+            }
           }
-        }
-        if (where.stripeCustomerId) {
-          for (const sub of h.subscriptions.values()) {
-            if (sub.stripeCustomerId === where.stripeCustomerId) return { organizationId: sub.organizationId }
+          if (where.stripeCustomerId) {
+            for (const sub of h.subscriptions.values()) {
+              if (sub.stripeCustomerId === where.stripeCustomerId)
+                return { organizationId: sub.organizationId }
+            }
           }
-        }
-        return null
-      }),
-      upsert: vi.fn(async ({ where, create }: { where: { organizationId: string }; create: { stripeCustomerId: string; stripeSubscriptionId: string; status: string } }) => {
-        h.subscriptions.set(where.organizationId, {
-          organizationId: where.organizationId,
-          stripeCustomerId: create.stripeCustomerId,
-          stripeSubscriptionId: create.stripeSubscriptionId,
-          status: create.status,
-        })
-        return undefined
-      }),
-      update: vi.fn(async ({ where, data }: { where: { organizationId: string }; data: { status?: string } }) => {
-        const sub = h.subscriptions.get(where.organizationId)
-        if (sub && data.status) sub.status = data.status
-        return undefined
-      }),
+          return null
+        },
+      ),
+      upsert: vi.fn(
+        async ({
+          where,
+          create,
+        }: {
+          where: { organizationId: string }
+          create: { stripeCustomerId: string; stripeSubscriptionId: string; status: string }
+        }) => {
+          h.subscriptions.set(where.organizationId, {
+            organizationId: where.organizationId,
+            stripeCustomerId: create.stripeCustomerId,
+            stripeSubscriptionId: create.stripeSubscriptionId,
+            status: create.status,
+          })
+          return undefined
+        },
+      ),
+      update: vi.fn(
+        async ({
+          where,
+          data,
+        }: {
+          where: { organizationId: string }
+          data: { status?: string }
+        }) => {
+          const sub = h.subscriptions.get(where.organizationId)
+          if (sub && data.status) sub.status = data.status
+          return undefined
+        },
+      ),
     },
     auditLog: {
       create: vi.fn(async ({ data }: { data: { action: string; organizationId: string } }) => {
@@ -87,15 +122,23 @@ beforeEach(() => {
   h.webhookEvents = []
   h.tx = {
     entitlement: {
-      upsert: vi.fn(async ({ where, create }: { where: { organizationId: string }; create: { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] } }) => {
-        h.entitlements.set(where.organizationId, {
-          plan: create.plan,
-          seatsLimit: create.seatsLimit,
-          aiCreditsMonthly: create.aiCreditsMonthly,
-          modules: create.modules,
-        })
-        return undefined
-      }),
+      upsert: vi.fn(
+        async ({
+          where,
+          create,
+        }: {
+          where: { organizationId: string }
+          create: { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] }
+        }) => {
+          h.entitlements.set(where.organizationId, {
+            plan: create.plan,
+            seatsLimit: create.seatsLimit,
+            aiCreditsMonthly: create.aiCreditsMonthly,
+            modules: create.modules,
+          })
+          return undefined
+        },
+      ),
     },
     subscription: {
       update: vi.fn(async () => undefined),

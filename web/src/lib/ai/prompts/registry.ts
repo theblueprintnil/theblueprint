@@ -55,7 +55,10 @@ export function getPromptTemplate(featureKey: string): PromptTemplate<unknown> {
 }
 
 export function listPromptTemplates(): Array<{ featureKey: string; version: string }> {
-  return Array.from(REGISTRY.values()).map((t) => ({ featureKey: t.featureKey, version: t.version }))
+  return Array.from(REGISTRY.values()).map((t) => ({
+    featureKey: t.featureKey,
+    version: t.version,
+  }))
 }
 
 /**

@@ -145,8 +145,8 @@ export default function AthleteProfileEditPage() {
               <p className="mt-3 font-display text-lg font-bold text-ink">Jordan Carter</p>
               <p className="text-sm text-muted-foreground">Point Guard · State University</p>
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                Your public media kit updates automatically when you publish. Brands see your
-                stats, interests, and verified badge.
+                Your public media kit updates automatically when you publish. Brands see your stats,
+                interests, and verified badge.
               </p>
             </div>
           </Card>
@@ -173,7 +173,9 @@ export default function AthleteProfileEditPage() {
                   <CheckIcon /> Brand interests selected
                 </li>
                 <li className="flex items-center gap-2 text-amber-600">
-                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-amber-100 text-[10px] font-bold">!</span>
+                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-amber-100 text-[10px] font-bold">
+                    !
+                  </span>
                   Add 2–3 content samples to reach 100%
                 </li>
               </ul>
@@ -199,7 +201,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function CheckIcon() {
   return (
     <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-brand-tint text-brand">
-      <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <svg
+        viewBox="0 0 12 12"
+        className="h-2.5 w-2.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        aria-hidden
+      >
         <path d="M2.5 6.5l2.3 2.3 4.7-5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </span>

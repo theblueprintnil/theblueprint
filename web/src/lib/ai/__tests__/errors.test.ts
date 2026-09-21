@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { AiError, toSafeError } from '../errors'
 import { ProviderError } from '../provider'
 
-
 describe('toSafeError', () => {
   it('preserves AiError code and message', () => {
     const error = new AiError('entitlement_denied', 'Feature not on your plan.')

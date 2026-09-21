@@ -46,7 +46,11 @@ export default function NewCampaignPage() {
               </select>
             </Field>
             <Field label="Description">
-              <textarea rows={4} placeholder="What are you asking athletes to do and why?" className={`${INPUT} resize-none sm:col-span-2`} />
+              <textarea
+                rows={4}
+                placeholder="What are you asking athletes to do and why?"
+                className={`${INPUT} resize-none sm:col-span-2`}
+              />
             </Field>
           </div>
         </Card>

@@ -199,7 +199,9 @@ async function main() {
     },
   })
 
-  const athleteProfile = await prisma.athlete.findUniqueOrThrow({ where: { userId: athleteUser.id } })
+  const athleteProfile = await prisma.athlete.findUniqueOrThrow({
+    where: { userId: athleteUser.id },
+  })
 
   await prisma.agentTaskExecution.create({
     data: {

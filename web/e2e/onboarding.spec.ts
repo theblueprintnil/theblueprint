@@ -18,4 +18,3 @@ test('unauthenticated users are redirected away from protected routes', async ({
   await page.goto('/app/dashboard')
   await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Fdashboard$/)
 })
-

@@ -38,8 +38,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
       null
     if (!primaryEmail) return null
     const email = primaryEmail.toLowerCase()
-    const name =
-      [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ').trim() || email
+    const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ').trim() || email
     const existing = await prismaAuth.user.findUnique({ where: { email } })
     if (existing) {
       return toSessionUser(existing)
@@ -55,4 +54,3 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     return null
   }
 }
-

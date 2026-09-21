@@ -3,9 +3,27 @@ import Link from 'next/link'
 import { Card, DashboardStatCard, PageHeader } from '@/components/dashboard/dashboard-ui'
 
 const RECENT_DEALS = [
-  { title: 'Apex Electrolyte Launch', brand: 'Apex Nutrition', value: '$3,500', status: 'Negotiation', tone: 'brand' },
-  { title: 'UrbanFit Social Takeover', brand: 'UrbanFit Co.', value: '$1,800', status: 'Athlete review', tone: 'amber' },
-  { title: 'TechGear Pro Endorsement', brand: 'TechGear', value: '$5,000', status: 'Completed', tone: 'green' },
+  {
+    title: 'Apex Electrolyte Launch',
+    brand: 'Apex Nutrition',
+    value: '$3,500',
+    status: 'Negotiation',
+    tone: 'brand',
+  },
+  {
+    title: 'UrbanFit Social Takeover',
+    brand: 'UrbanFit Co.',
+    value: '$1,800',
+    status: 'Athlete review',
+    tone: 'amber',
+  },
+  {
+    title: 'TechGear Pro Endorsement',
+    brand: 'TechGear',
+    value: '$5,000',
+    status: 'Completed',
+    tone: 'green',
+  },
 ]
 
 const ACTIVITY = [
@@ -48,21 +66,29 @@ export default function AthleteOverviewPage() {
           title="Deals in flight"
           className="lg:col-span-2"
           action={
-            <Link href="/dashboard/athlete/deals" className="text-sm font-semibold text-brand hover:underline">
+            <Link
+              href="/dashboard/athlete/deals"
+              className="text-sm font-semibold text-brand hover:underline"
+            >
               View all
             </Link>
           }
         >
           <ul className="divide-y divide-border/70">
             {RECENT_DEALS.map((deal) => (
-              <li key={deal.title} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+              <li
+                key={deal.title}
+                className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0"
+              >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-ink">{deal.title}</p>
                   <p className="text-sm text-muted-foreground">{deal.brand}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
                   <span className="font-display text-sm font-extrabold text-ink">{deal.value}</span>
-                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[deal.tone] ?? 'bg-muted text-muted-foreground'}`}>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[deal.tone] ?? 'bg-muted text-muted-foreground'}`}
+                  >
                     {deal.status}
                   </span>
                 </div>
@@ -71,7 +97,17 @@ export default function AthleteOverviewPage() {
           </ul>
         </Card>
 
-        <Card title="Earnings snapshot" action={<Link href="/dashboard/athlete/earnings" className="text-sm font-semibold text-brand hover:underline">Details</Link>}>
+        <Card
+          title="Earnings snapshot"
+          action={
+            <Link
+              href="/dashboard/athlete/earnings"
+              className="text-sm font-semibold text-brand hover:underline"
+            >
+              Details
+            </Link>
+          }
+        >
           <dl className="space-y-4">
             {[
               ['Earned this month', '$4,250'],

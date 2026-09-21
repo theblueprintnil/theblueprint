@@ -59,11 +59,13 @@ vi.mock('../../db', () => ({
         h.aiRuns.push(record)
         return record
       }),
-      update: vi.fn(async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
-        const run = h.aiRuns.find((r) => r.id === where.id)
-        if (run) Object.assign(run, data)
-        return run
-      }),
+      update: vi.fn(
+        async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
+          const run = h.aiRuns.find((r) => r.id === where.id)
+          if (run) Object.assign(run, data)
+          return run
+        },
+      ),
     },
     auditLog: {
       create: vi.fn(async ({ data }: { data: Record<string, unknown> }) => {
@@ -78,17 +80,29 @@ vi.mock('../../db', () => ({
       }),
     },
     entitlement: {
-      update: vi.fn(async ({ where, data }: { where: { organizationId: string }; data: { aiCreditsUsed: { increment: number } } }) => {
-        h.entitlementUpdates.push({ organizationId: where.organizationId, increment: data.aiCreditsUsed.increment })
-        return undefined
-      }),
+      update: vi.fn(
+        async ({
+          where,
+          data,
+        }: {
+          where: { organizationId: string }
+          data: { aiCreditsUsed: { increment: number } }
+        }) => {
+          h.entitlementUpdates.push({
+            organizationId: where.organizationId,
+            increment: data.aiCreditsUsed.increment,
+          })
+          return undefined
+        },
+      ),
     },
   },
 }))
 
 vi.mock('../../organizations', () => ({
-  getMembershipRole: vi.fn(async (userId: string, organizationId: string) =>
-    h.membershipRoles.get(`${userId}:${organizationId}`) ?? null,
+  getMembershipRole: vi.fn(
+    async (userId: string, organizationId: string) =>
+      h.membershipRoles.get(`${userId}:${organizationId}`) ?? null,
   ),
 }))
 
@@ -97,12 +111,25 @@ vi.mock('../../billing/entitlements', () => ({
     const snap = h.snapshots.get(organizationId)
     return snap ? { ...snap } : null
   }),
-  decide: vi.fn((snapshot: { status: string; modules: string[]; aiCreditsUsed: number; aiCreditsMonthly: number }, feature: string) => {
-    if (snapshot.status === 'demo_expired') return { allowed: false, reason: 'Your demo has expired.' }
-    if (!snapshot.modules.includes(feature)) return { allowed: false, reason: 'Feature not on your plan.' }
-    if (snapshot.aiCreditsUsed >= snapshot.aiCreditsMonthly) return { allowed: false, reason: 'AI credits exhausted.' }
-    return { allowed: true, reason: null }
-  }),
+  decide: vi.fn(
+    (
+      snapshot: {
+        status: string
+        modules: string[]
+        aiCreditsUsed: number
+        aiCreditsMonthly: number
+      },
+      feature: string,
+    ) => {
+      if (snapshot.status === 'demo_expired')
+        return { allowed: false, reason: 'Your demo has expired.' }
+      if (!snapshot.modules.includes(feature))
+        return { allowed: false, reason: 'Feature not on your plan.' }
+      if (snapshot.aiCreditsUsed >= snapshot.aiCreditsMonthly)
+        return { allowed: false, reason: 'AI credits exhausted.' }
+      return { allowed: true, reason: null }
+    },
+  ),
 }))
 
 vi.mock('../rate-limit', () => ({
@@ -153,7 +180,10 @@ const INPUT = {
   deadline: '2026-12-01',
 }
 
-function setSnapshot(orgId: string, overrides: Partial<NonNullable<ReturnType<typeof Object>> & Record<string, unknown>> = {}) {
+function setSnapshot(
+  orgId: string,
+  overrides: Partial<NonNullable<ReturnType<typeof Object>> & Record<string, unknown>> = {},
+) {
   h.snapshots.set(orgId, {
     plan: 'STARTER',
     seatsLimit: 1,

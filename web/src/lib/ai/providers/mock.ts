@@ -9,7 +9,12 @@
  * Server-only.
  */
 
-import { ProviderError, type AiProvider, type ProviderRequest, type ProviderResponse } from '../provider'
+import {
+  ProviderError,
+  type AiProvider,
+  type ProviderRequest,
+  type ProviderResponse,
+} from '../provider'
 
 function roughTokenCount(text: string): number {
   // ~4 chars per token is a reasonable approximation for telemetry only.

@@ -33,7 +33,11 @@ export class AiError extends Error {
   readonly code: AiErrorCode
   readonly status: number
 
-  constructor(code: AiErrorCode, message: string, options: { status?: number; cause?: unknown } = {}) {
+  constructor(
+    code: AiErrorCode,
+    message: string,
+    options: { status?: number; cause?: unknown } = {},
+  ) {
     super(message, { cause: options.cause })
     this.name = 'AiError'
     this.code = code
@@ -98,7 +102,8 @@ export function toSafeError(error: unknown): SafeAiError {
     const code = PROVIDER_CODE_MAP[error.code] ?? 'provider_failure'
     return {
       code,
-      message: SAFE_MESSAGES[code] ?? 'The AI service is temporarily unavailable. Please try again.',
+      message:
+        SAFE_MESSAGES[code] ?? 'The AI service is temporarily unavailable. Please try again.',
       status: defaultStatusForCode(code),
     }
   }

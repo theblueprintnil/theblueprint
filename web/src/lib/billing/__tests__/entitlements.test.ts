@@ -8,8 +8,28 @@ type MockTx = {
 
 const h = vi.hoisted(() => {
   const state = {
-    entitlements: new Map<string, { plan: string; seatsLimit: number; aiCreditsMonthly: number; aiCreditsUsed: number; modules: string[] }>(),
-    organizations: new Map<string, { demoExpiresAt: Date | null; subscription: { status: string; currentPeriodEnd: Date | null; trialEnd: Date | null; cancelAtPeriodEnd: boolean } | null }>(),
+    entitlements: new Map<
+      string,
+      {
+        plan: string
+        seatsLimit: number
+        aiCreditsMonthly: number
+        aiCreditsUsed: number
+        modules: string[]
+      }
+    >(),
+    organizations: new Map<
+      string,
+      {
+        demoExpiresAt: Date | null
+        subscription: {
+          status: string
+          currentPeriodEnd: Date | null
+          trialEnd: Date | null
+          cancelAtPeriodEnd: boolean
+        } | null
+      }
+    >(),
     auditLogs: [] as Array<{ action: string; organizationId: string }>,
     tx: null as null | MockTx,
   }
@@ -28,25 +48,31 @@ vi.mock('../../db', () => ({
         return {
           id: where.id,
           demoExpiresAt: org.demoExpiresAt,
-          entitlement: entitlement
-            ? { ...entitlement, modules: entitlement.modules }
-            : null,
+          entitlement: entitlement ? { ...entitlement, modules: entitlement.modules } : null,
           subscription: org.subscription,
         }
       }),
       update: vi.fn(async () => undefined),
     },
     entitlement: {
-      upsert: vi.fn(async ({ where, create }: { where: { organizationId: string }; create: { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] } }) => {
-        h.entitlements.set(where.organizationId, {
-          plan: create.plan,
-          seatsLimit: create.seatsLimit,
-          aiCreditsMonthly: create.aiCreditsMonthly,
-          aiCreditsUsed: 0,
-          modules: create.modules,
-        })
-        return undefined
-      }),
+      upsert: vi.fn(
+        async ({
+          where,
+          create,
+        }: {
+          where: { organizationId: string }
+          create: { plan: string; seatsLimit: number; aiCreditsMonthly: number; modules: string[] }
+        }) => {
+          h.entitlements.set(where.organizationId, {
+            plan: create.plan,
+            seatsLimit: create.seatsLimit,
+            aiCreditsMonthly: create.aiCreditsMonthly,
+            aiCreditsUsed: 0,
+            modules: create.modules,
+          })
+          return undefined
+        },
+      ),
     },
     subscription: {
       update: vi.fn(async () => undefined),

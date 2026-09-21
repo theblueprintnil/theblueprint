@@ -43,7 +43,12 @@ export {
   type PromptTemplate,
 } from './prompts/registry'
 export { sanitizeInput, sanitizeInputObject, registerRedactor, clearRedactors } from './redaction'
-export { getRateLimiter, InMemoryRateLimiter, type RateLimiter, type RateLimitDecision } from './rate-limit'
+export {
+  getRateLimiter,
+  InMemoryRateLimiter,
+  type RateLimiter,
+  type RateLimitDecision,
+} from './rate-limit'
 
 // Side-effect: register built-in prompt templates.
 import './prompts/templates'

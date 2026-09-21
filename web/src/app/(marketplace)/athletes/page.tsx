@@ -6,7 +6,15 @@ import Link from 'next/link'
 import { AthleteAvatar } from '@/components/marketplace/athlete-avatar'
 import { MARKET_ATHLETES } from '@/lib/marketplace/athletes'
 
-const SPORTS = ['All Sports', 'Basketball', 'Soccer', 'Football', 'Tennis', 'Baseball', 'Track & Field']
+const SPORTS = [
+  'All Sports',
+  'Basketball',
+  'Soccer',
+  'Football',
+  'Tennis',
+  'Baseball',
+  'Track & Field',
+]
 
 export default function AthletesDirectoryPage() {
   const [query, setQuery] = useState('')
@@ -37,8 +45,8 @@ export default function AthletesDirectoryPage() {
           Discover verified athlete brands
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Search by sport, school, or interest. Every profile shows verification
-          status, real audience numbers, and the media kit the athlete controls.
+          Search by sport, school, or interest. Every profile shows verification status, real
+          audience numbers, and the media kit the athlete controls.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
@@ -83,7 +91,9 @@ export default function AthletesDirectoryPage() {
         </p>
         {filtered.length === 0 ? (
           <div className="mt-8 rounded-2xl border border-dashed border-border bg-white/70 p-16 text-center">
-            <h2 className="font-display text-lg font-bold text-ink">No athletes match your search</h2>
+            <h2 className="font-display text-lg font-bold text-ink">
+              No athletes match your search
+            </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Try a different sport or clear the search query.
             </p>
@@ -96,14 +106,34 @@ export default function AthletesDirectoryPage() {
                 className="card-hover-lift flex flex-col rounded-2xl border border-border bg-white p-6"
               >
                 <div className="flex items-start gap-4">
-                  <AthleteAvatar name={athlete.name} hue={athlete.avatarHue} className="h-14 w-14 rounded-2xl text-lg" />
+                  <AthleteAvatar
+                    name={athlete.name}
+                    hue={athlete.avatarHue}
+                    className="h-14 w-14 rounded-2xl text-lg"
+                  />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h2 className="truncate font-display text-lg font-bold text-ink">{athlete.name}</h2>
+                      <h2 className="truncate font-display text-lg font-bold text-ink">
+                        {athlete.name}
+                      </h2>
                       {athlete.verificationStatus === 'verified' ? (
-                        <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-brand text-white" title="Verified">
-                          <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
-                            <path d="M2.5 6.5l2.3 2.3 4.7-5" strokeLinecap="round" strokeLinejoin="round" />
+                        <span
+                          className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-brand text-white"
+                          title="Verified"
+                        >
+                          <svg
+                            viewBox="0 0 12 12"
+                            className="h-2.5 w-2.5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.2"
+                            aria-hidden
+                          >
+                            <path
+                              d="M2.5 6.5l2.3 2.3 4.7-5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
                           </svg>
                         </span>
                       ) : (
@@ -117,24 +147,41 @@ export default function AthletesDirectoryPage() {
                     </p>
                   </div>
                 </div>
-                <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{athlete.bio}</p>
+                <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                  {athlete.bio}
+                </p>
                 <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-border/70 pt-4 text-center">
                   <div>
-                    <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Followers</dt>
-                    <dd className="mt-0.5 font-display text-sm font-extrabold text-ink">{athlete.followers}</dd>
+                    <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Followers
+                    </dt>
+                    <dd className="mt-0.5 font-display text-sm font-extrabold text-ink">
+                      {athlete.followers}
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Engagement</dt>
-                    <dd className="mt-0.5 font-display text-sm font-extrabold text-ink">{athlete.engagementRate}</dd>
+                    <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Engagement
+                    </dt>
+                    <dd className="mt-0.5 font-display text-sm font-extrabold text-ink">
+                      {athlete.engagementRate}
+                    </dd>
                   </div>
                   <div>
-                    <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Location</dt>
-                    <dd className="mt-0.5 truncate text-sm font-semibold text-ink">{athlete.location.split(',')[0]}</dd>
+                    <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Location
+                    </dt>
+                    <dd className="mt-0.5 truncate text-sm font-semibold text-ink">
+                      {athlete.location.split(',')[0]}
+                    </dd>
                   </div>
                 </dl>
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {athlete.brandInterests.slice(0, 3).map((interest) => (
-                    <span key={interest} className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand">
+                    <span
+                      key={interest}
+                      className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand"
+                    >
                       {interest}
                     </span>
                   ))}

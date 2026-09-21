@@ -99,7 +99,10 @@ export async function runAiAction<TInput, TOutput>(
   }
   const decision = decide(snapshot, featureKey)
   if (!decision.allowed) {
-    throw new AiError('entitlement_denied', decision.reason ?? 'Feature not available on your plan.')
+    throw new AiError(
+      'entitlement_denied',
+      decision.reason ?? 'Feature not available on your plan.',
+    )
   }
 
   // 3. Rate-limit check.
@@ -222,7 +225,12 @@ export async function runAiAction<TInput, TOutput>(
       eventType: 'AI_CREDIT_CONSUMED',
       quantity: 1,
       externalRef: run.id,
-      metadata: { featureKey, model, inputTokens: usage.inputTokens, outputTokens: usage.outputTokens },
+      metadata: {
+        featureKey,
+        model,
+        inputTokens: usage.inputTokens,
+        outputTokens: usage.outputTokens,
+      },
     },
   })
   await prismaAuth.entitlement.update({

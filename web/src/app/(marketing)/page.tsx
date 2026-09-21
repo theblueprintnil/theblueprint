@@ -64,9 +64,8 @@ function Hero() {
           Manage your NIL <span className="brand-gradient-text">business.</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-          One platform where athletes publish verified brands, brands discover
-          the right partners, and every deal moves from brief to disclosure with
-          compliance guardrails intact.
+          One platform where athletes publish verified brands, brands discover the right partners,
+          and every deal moves from brief to disclosure with compliance guardrails intact.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
@@ -103,9 +102,19 @@ function Hero() {
                 ['Contract review', 'Version 3 · Guardian approved'],
                 ['Signed', 'Audit trail recorded'],
               ].map(([stage, detail]) => (
-                <div key={stage} className="flex items-center gap-3 rounded-xl border border-border/70 bg-white p-3">
+                <div
+                  key={stage}
+                  className="flex items-center gap-3 rounded-xl border border-border/70 bg-white p-3"
+                >
                   <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-tint font-display text-xs font-bold text-brand">
-                    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+                    <svg
+                      viewBox="0 0 16 16"
+                      className="h-3.5 w-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      aria-hidden
+                    >
                       <path d="M3.5 8.5l3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
@@ -119,8 +128,12 @@ function Hero() {
           </div>
         </div>
         <div className="glass-card absolute -bottom-6 -left-4 hidden rounded-2xl px-5 py-4 sm:block">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Media kit views</p>
-          <p className="mt-1 font-display text-2xl font-extrabold text-ink">142 <span className="text-sm font-semibold text-brand">+18%</span></p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Media kit views
+          </p>
+          <p className="mt-1 font-display text-2xl font-extrabold text-ink">
+            142 <span className="text-sm font-semibold text-brand">+18%</span>
+          </p>
         </div>
       </div>
     </section>
@@ -138,7 +151,9 @@ function StatsBand() {
           ['Compliance checks', '100%'],
         ].map(([label, value]) => (
           <div key={label} className="text-center lg:text-left">
-            <p className="font-display text-3xl font-extrabold tracking-tight text-brand">{value}</p>
+            <p className="font-display text-3xl font-extrabold tracking-tight text-brand">
+              {value}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">{label}</p>
           </div>
         ))}
@@ -152,9 +167,16 @@ function TwoSided() {
     <section className="mx-auto max-w-7xl px-6 py-20">
       <div className="grid gap-6 lg:grid-cols-2">
         {AUDIENCE_CARDS.map((card) => (
-          <div key={card.eyebrow} className="card-hover-lift flex flex-col rounded-3xl border border-border bg-white p-8">
-            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">{card.eyebrow}</span>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">{card.title}</h2>
+          <div
+            key={card.eyebrow}
+            className="card-hover-lift flex flex-col rounded-3xl border border-border bg-white p-8"
+          >
+            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+              {card.eyebrow}
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">
+              {card.title}
+            </h2>
             <p className="mt-3 leading-relaxed text-muted-foreground">{card.body}</p>
             <Link
               href={card.href}
@@ -199,14 +221,15 @@ function ComplianceBand() {
       <div className="brand-gradient-soft rounded-3xl border border-brand/15 p-8 sm:p-12">
         <div className="grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">Compliance framework</span>
+            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+              Compliance framework
+            </span>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">
               Disclosure is a workflow, not an afterthought
             </h2>
             <p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">
-              Every deal carries disclosure checkpoints, verification status, and
-              an audit trail. We help you stay organized — we never make
-              eligibility determinations for you.
+              Every deal carries disclosure checkpoints, verification status, and an audit trail. We
+              help you stay organized — we never make eligibility determinations for you.
             </p>
             <Link
               href="/nil-compliance"

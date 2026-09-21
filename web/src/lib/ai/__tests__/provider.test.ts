@@ -3,7 +3,6 @@ import { mockProvider } from '../providers/mock'
 import { ProviderError, parseJsonResponse } from '../provider'
 import { z } from 'zod'
 
-
 describe('mockProvider', () => {
   it('returns deterministic JSON when a schema hint is provided', async () => {
     const response = await mockProvider.complete({
@@ -35,9 +34,9 @@ describe('mockProvider', () => {
   })
 
   it('throws when no model is specified', async () => {
-    await expect(
-      mockProvider.complete({ model: '', messages: [] }),
-    ).rejects.toBeInstanceOf(ProviderError)
+    await expect(mockProvider.complete({ model: '', messages: [] })).rejects.toBeInstanceOf(
+      ProviderError,
+    )
   })
 })
 

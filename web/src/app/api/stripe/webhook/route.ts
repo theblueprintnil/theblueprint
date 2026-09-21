@@ -13,11 +13,7 @@ export async function POST(request: Request) {
   const payload = await request.text()
   let event
   try {
-    event = getStripe().webhooks.constructEvent(
-      payload,
-      signature,
-      stripeWebhookSecret(),
-    )
+    event = getStripe().webhooks.constructEvent(payload, signature, stripeWebhookSecret())
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Signature verification failed.'
     return NextResponse.json({ error: message }, { status: 400 })

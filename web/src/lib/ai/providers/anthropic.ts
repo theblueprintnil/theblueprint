@@ -5,7 +5,12 @@
  * Server-only. Loaded lazily so the dependency is optional.
  */
 
-import { ProviderError, type AiProvider, type ProviderRequest, type ProviderResponse } from '../provider'
+import {
+  ProviderError,
+  type AiProvider,
+  type ProviderRequest,
+  type ProviderResponse,
+} from '../provider'
 
 interface AnthropicMessage {
   role: 'user' | 'assistant'
@@ -30,7 +35,10 @@ async function getClient(): Promise<AnthropicClient> {
   if (cachedClient) return cachedClient
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey || apiKey.trim() === '') {
-    throw new ProviderError('auth', 'Anthropic provider selected but ANTHROPIC_API_KEY is not configured.')
+    throw new ProviderError(
+      'auth',
+      'Anthropic provider selected but ANTHROPIC_API_KEY is not configured.',
+    )
   }
   const mod = (await import('@anthropic-ai/sdk')) as unknown as {
     default: new (config: { apiKey: string }) => AnthropicClient
@@ -69,7 +77,8 @@ export const anthropicProvider: AiProvider = {
     if (request.jsonSchema) {
       // Anthropic supports tool-use for strict JSON; here we instruct via system
       // and rely on the orchestrator's Zod validation to enforce the shape.
-      args.system = `${system ?? ''}\n\nReturn ONLY valid JSON matching this schema: ${JSON.stringify(request.jsonSchema)}`.trim()
+      args.system =
+        `${system ?? ''}\n\nReturn ONLY valid JSON matching this schema: ${JSON.stringify(request.jsonSchema)}`.trim()
     }
 
     let response: AnthropicResponse
@@ -125,7 +134,13 @@ function toProviderError(error: unknown): ProviderError {
     })
   }
   if (lower.includes('api key') || lower.includes('401') || lower.includes('authentication')) {
-    return new ProviderError('auth', 'Anthropic authentication failed.', { upstreamMessage: message, cause: error })
+    return new ProviderError('auth', 'Anthropic authentication failed.', {
+      upstreamMessage: message,
+      cause: error,
+    })
   }
-  return new ProviderError('unknown', 'Anthropic request failed.', { upstreamMessage: message, cause: error })
+  return new ProviderError('unknown', 'Anthropic request failed.', {
+    upstreamMessage: message,
+    cause: error,
+  })
 }

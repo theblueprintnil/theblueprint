@@ -3,12 +3,7 @@ import { prismaAuth } from '../db'
 import { DEMO_DURATION_DAYS, PLANS, getPlanConfig } from './plans'
 
 export type BillingSnapshotStatus =
-  | BillingStatus
-  | 'demo_active'
-  | 'demo_expired'
-  | 'canceled'
-  | 'unpaid'
-  | 'past_due'
+  BillingStatus | 'demo_active' | 'demo_expired' | 'canceled' | 'unpaid' | 'past_due'
 
 export interface EntitlementSnapshot {
   plan: PlanType
@@ -71,7 +66,9 @@ export async function seedDemoEntitlement(
   })
 }
 
-export async function getEntitlementSnapshot(organizationId: string): Promise<EntitlementSnapshot | null> {
+export async function getEntitlementSnapshot(
+  organizationId: string,
+): Promise<EntitlementSnapshot | null> {
   const row = await prismaAuth.organization.findUnique({
     where: { id: organizationId },
     include: { entitlement: true, subscription: true },
@@ -178,7 +175,12 @@ export async function applyEntitlementFromSubscription(
         modules: input.modules,
       },
     })
-    if (input.currentPeriodStart || input.currentPeriodEnd || input.trialEnd || input.cancelAtPeriodEnd) {
+    if (
+      input.currentPeriodStart ||
+      input.currentPeriodEnd ||
+      input.trialEnd ||
+      input.cancelAtPeriodEnd
+    ) {
       await tx.subscription.update({
         where: { organizationId },
         data: {

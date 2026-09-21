@@ -70,7 +70,10 @@ export function getPlanConfig(plan: PlanId): PlanConfig {
   return PLANS[plan]
 }
 
-export function resolveStripePriceId(plan: PlanId, env: Record<string, string | undefined> = process.env): string | null {
+export function resolveStripePriceId(
+  plan: PlanId,
+  env: Record<string, string | undefined> = process.env,
+): string | null {
   const config = PLANS[plan]
   if (!config.priceIdEnv) return null
   const value = env[config.priceIdEnv]

@@ -38,8 +38,8 @@ export function SiteFooter() {
             <Logo size="sm" />
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            The two-sided NIL operating platform. Athletes build verified
-            personal brands; brands run compliant campaigns — in one marketplace.
+            The two-sided NIL operating platform. Athletes build verified personal brands; brands
+            run compliant campaigns — in one marketplace.
           </p>
         </div>
         {FOOTER_COLS.map((col) => (
@@ -66,9 +66,9 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} The Blueprint. All rights reserved.</p>
           <p className="max-w-2xl">
-            The Blueprint is an operating platform, not a legal advisor. NCAA,
-            conference, and school compliance determinations require qualified
-            professional review and remain human decisions.
+            The Blueprint is an operating platform, not a legal advisor. NCAA, conference, and
+            school compliance determinations require qualified professional review and remain human
+            decisions.
           </p>
         </div>
       </div>

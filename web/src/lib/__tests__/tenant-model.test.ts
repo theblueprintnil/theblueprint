@@ -29,12 +29,18 @@ d('RLS tenant isolation for tenant data model (real Postgres)', () => {
         workspaceType: 'ATHLETE_STUDIO',
         createdById: userA.id,
         memberships: { create: { userId: userA.id, role: 'OWNER' } },
-        projects: { create: { name: 'A Project', slug: 'a-project', status: 'ACTIVE', ownerUserId: userA.id } },
-        subscription: { create: { stripeCustomerId: 'cus_a', stripeSubscriptionId: 'sub_a', status: 'ACTIVE' } },
+        projects: {
+          create: { name: 'A Project', slug: 'a-project', status: 'ACTIVE', ownerUserId: userA.id },
+        },
+        subscription: {
+          create: { stripeCustomerId: 'cus_a', stripeSubscriptionId: 'sub_a', status: 'ACTIVE' },
+        },
         entitlement: { create: { plan: 'STARTER', seatsLimit: 3, aiCreditsMonthly: 100 } },
         aiRuns: { create: { status: 'SUCCEEDED', model: 'gpt-4o' } },
         usageEvents: { create: { eventType: 'AI_CREDIT_CONSUMED' } },
-        invitations: { create: { email: 'invite-a@test.local', tokenHash: 'tok-a', expiresAt: new Date() } },
+        invitations: {
+          create: { email: 'invite-a@test.local', tokenHash: 'tok-a', expiresAt: new Date() },
+        },
       },
     })
 
@@ -45,8 +51,12 @@ d('RLS tenant isolation for tenant data model (real Postgres)', () => {
         workspaceType: 'AGENCY_WORKSPACE',
         createdById: userB.id,
         memberships: { create: { userId: userB.id, role: 'OWNER' } },
-        projects: { create: { name: 'B Project', slug: 'b-project', status: 'ACTIVE', ownerUserId: userB.id } },
-        subscription: { create: { stripeCustomerId: 'cus_b', stripeSubscriptionId: 'sub_b', status: 'ACTIVE' } },
+        projects: {
+          create: { name: 'B Project', slug: 'b-project', status: 'ACTIVE', ownerUserId: userB.id },
+        },
+        subscription: {
+          create: { stripeCustomerId: 'cus_b', stripeSubscriptionId: 'sub_b', status: 'ACTIVE' },
+        },
         entitlement: { create: { plan: 'GROWTH', seatsLimit: 10, aiCreditsMonthly: 500 } },
       },
     })

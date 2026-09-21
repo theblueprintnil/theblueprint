@@ -8,13 +8,39 @@ export const metadata: Metadata = {
 }
 
 const CAMPAIGNS = [
-  { name: 'Fall Hydration Ambassador', status: 'Active', budget: '$8,000', spend: '$3,250', athletes: 3, ends: 'Sep 30' },
-  { name: 'Back-to-School Apparel', status: 'Briefing', budget: '$5,500', spend: '$0', athletes: 0, ends: 'Not started' },
-  { name: 'Holiday Social Sprint', status: 'Draft', budget: '$12,000', spend: '$0', athletes: 0, ends: 'Not started' },
+  {
+    name: 'Fall Hydration Ambassador',
+    status: 'Active',
+    budget: '$8,000',
+    spend: '$3,250',
+    athletes: 3,
+    ends: 'Sep 30',
+  },
+  {
+    name: 'Back-to-School Apparel',
+    status: 'Briefing',
+    budget: '$5,500',
+    spend: '$0',
+    athletes: 0,
+    ends: 'Not started',
+  },
+  {
+    name: 'Holiday Social Sprint',
+    status: 'Draft',
+    budget: '$12,000',
+    spend: '$0',
+    athletes: 0,
+    ends: 'Not started',
+  },
 ]
 
 const ACTIVE_DEALS = [
-  { deal: 'Apex Electrolyte Launch', athlete: 'Jordan Carter', value: '$3,500', stage: 'Negotiation' },
+  {
+    deal: 'Apex Electrolyte Launch',
+    athlete: 'Jordan Carter',
+    value: '$3,500',
+    stage: 'Negotiation',
+  },
   { deal: 'UrbanFit Takeover', athlete: 'Maya Reyes', value: '$1,800', stage: 'Contract review' },
 ]
 
@@ -50,7 +76,10 @@ export default function BrandDashboardPage() {
         title="Campaigns"
         className="mt-8"
         action={
-          <Link href="/dashboard/brand/campaigns/new" className="text-sm font-semibold text-brand hover:underline">
+          <Link
+            href="/dashboard/brand/campaigns/new"
+            className="text-sm font-semibold text-brand hover:underline"
+          >
             Create campaign
           </Link>
         }
@@ -72,11 +101,15 @@ export default function BrandDashboardPage() {
                 <tr key={campaign.name} className="transition hover:bg-muted/20">
                   <td className="py-3.5 pr-4 font-semibold text-ink">{campaign.name}</td>
                   <td className="py-3.5 pr-4">
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[campaign.status] ?? 'bg-muted text-muted-foreground'}`}>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[campaign.status] ?? 'bg-muted text-muted-foreground'}`}
+                    >
                       {campaign.status}
                     </span>
                   </td>
-                  <td className="py-3.5 pr-4 font-display font-extrabold text-ink">{campaign.budget}</td>
+                  <td className="py-3.5 pr-4 font-display font-extrabold text-ink">
+                    {campaign.budget}
+                  </td>
                   <td className="py-3.5 pr-4 text-muted-foreground">{campaign.spend}</td>
                   <td className="py-3.5 pr-4 text-muted-foreground">{campaign.athletes}</td>
                   <td className="py-3.5 text-muted-foreground">{campaign.ends}</td>
@@ -92,14 +125,20 @@ export default function BrandDashboardPage() {
           title="Active deals"
           className="lg:col-span-2"
           action={
-            <Link href="/dashboard/brand/deals/deal-1" className="text-sm font-semibold text-brand hover:underline">
+            <Link
+              href="/dashboard/brand/deals/deal-1"
+              className="text-sm font-semibold text-brand hover:underline"
+            >
               Open workspace
             </Link>
           }
         >
           <ul className="divide-y divide-border/70">
             {ACTIVE_DEALS.map((deal) => (
-              <li key={deal.deal} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+              <li
+                key={deal.deal}
+                className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0"
+              >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-ink">{deal.deal}</p>
                   <p className="text-sm text-muted-foreground">{deal.athlete}</p>
@@ -119,15 +158,21 @@ export default function BrandDashboardPage() {
           <ul className="space-y-3 text-sm text-muted-foreground">
             <li className="flex items-center justify-between gap-3">
               <span>Disclosures up to date</span>
-              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">2 / 2</span>
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                2 / 2
+              </span>
             </li>
             <li className="flex items-center justify-between gap-3">
               <span>Contracts with verified athletes</span>
-              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">2 / 2</span>
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                2 / 2
+              </span>
             </li>
             <li className="flex items-center justify-between gap-3">
               <span>Pending consent items</span>
-              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">1</span>
+              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                1
+              </span>
             </li>
           </ul>
         </Card>

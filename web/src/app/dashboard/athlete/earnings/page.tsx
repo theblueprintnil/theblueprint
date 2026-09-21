@@ -7,9 +7,27 @@ export const metadata: Metadata = {
 }
 
 const PAYOUTS = [
-  { deal: 'TechGear Pro Endorsement', amount: '$5,000', status: 'Paid', method: 'ACH · Bank ending 4242', date: 'Aug 28, 2026' },
-  { deal: 'Apex Electrolyte Launch (installment 1)', amount: '$1,750', status: 'Scheduled', method: 'ACH · Bank ending 4242', date: 'Sep 15, 2026' },
-  { deal: 'UrbanFit Social Takeover', amount: '$1,800', status: 'Pending', method: 'Awaiting milestone', date: '—' },
+  {
+    deal: 'TechGear Pro Endorsement',
+    amount: '$5,000',
+    status: 'Paid',
+    method: 'ACH · Bank ending 4242',
+    date: 'Aug 28, 2026',
+  },
+  {
+    deal: 'Apex Electrolyte Launch (installment 1)',
+    amount: '$1,750',
+    status: 'Scheduled',
+    method: 'ACH · Bank ending 4242',
+    date: 'Sep 15, 2026',
+  },
+  {
+    deal: 'UrbanFit Social Takeover',
+    amount: '$1,800',
+    status: 'Pending',
+    method: 'Awaiting milestone',
+    date: '—',
+  },
 ]
 
 const STATUS_TONES: Record<string, string> = {
@@ -28,7 +46,11 @@ export default function AthleteEarningsPage() {
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard label="Earned this month" value="$4,250" hint="Across 2 active deals" />
-        <DashboardStatCard label="Pending approval" value="$1,800" hint="1 deal awaiting milestone" />
+        <DashboardStatCard
+          label="Pending approval"
+          value="$1,800"
+          hint="1 deal awaiting milestone"
+        />
         <DashboardStatCard label="Paid to date" value="$12,500" hint="Lifecycle to date" />
         <DashboardStatCard label="Tax withheld (est.)" value="$2,875" hint="23% reserve estimate" />
       </div>
@@ -49,9 +71,13 @@ export default function AthleteEarningsPage() {
               {PAYOUTS.map((payout) => (
                 <tr key={payout.deal} className="transition hover:bg-muted/20">
                   <td className="py-3.5 pr-4 font-semibold text-ink">{payout.deal}</td>
-                  <td className="py-3.5 pr-4 font-display font-extrabold text-ink">{payout.amount}</td>
+                  <td className="py-3.5 pr-4 font-display font-extrabold text-ink">
+                    {payout.amount}
+                  </td>
                   <td className="py-3.5 pr-4">
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[payout.status] ?? 'bg-muted text-muted-foreground'}`}>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[payout.status] ?? 'bg-muted text-muted-foreground'}`}
+                    >
                       {payout.status}
                     </span>
                   </td>
@@ -94,15 +120,16 @@ export default function AthleteEarningsPage() {
           <ul className="space-y-3 text-sm leading-relaxed text-muted-foreground">
             <li className="flex gap-3">
               <CheckIcon />
-              NIL income is generally taxable. The Blueprint does not provide tax advice — consult a qualified tax professional.
+              NIL income is generally taxable. The Blueprint does not provide tax advice — consult a
+              qualified tax professional.
             </li>
             <li className="flex gap-3">
               <CheckIcon />
-              Disclosure forms (e.g., school or state requirements) may depend on deal amounts and timing.
+              Disclosure forms (e.g., school or state requirements) may depend on deal amounts and
+              timing.
             </li>
             <li className="flex gap-3">
-              <CheckIcon />
-              A 1099 may be issued when payments cross the annual threshold.
+              <CheckIcon />A 1099 may be issued when payments cross the annual threshold.
             </li>
           </ul>
         </Card>
@@ -125,7 +152,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function CheckIcon() {
   return (
     <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-tint text-brand">
-      <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+      <svg
+        viewBox="0 0 16 16"
+        className="h-3 w-3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        aria-hidden
+      >
         <path d="M3.5 8.5l3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </span>

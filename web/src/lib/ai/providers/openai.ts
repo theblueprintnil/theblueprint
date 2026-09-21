@@ -8,7 +8,12 @@
  * is actually selected — keeping the mock-only dev path dependency-free.
  */
 
-import { ProviderError, type AiProvider, type ProviderRequest, type ProviderResponse } from '../provider'
+import {
+  ProviderError,
+  type AiProvider,
+  type ProviderRequest,
+  type ProviderResponse,
+} from '../provider'
 
 interface OpenAiChatChoice {
   message?: { content?: string | null }
@@ -38,7 +43,10 @@ async function getClient(): Promise<OpenAiClient> {
   if (cachedClient) return cachedClient
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey || apiKey.trim() === '') {
-    throw new ProviderError('auth', 'OpenAI provider selected but OPENAI_API_KEY is not configured.')
+    throw new ProviderError(
+      'auth',
+      'OpenAI provider selected but OPENAI_API_KEY is not configured.',
+    )
   }
   // Lazy import so the dependency is optional.
   const mod = (await import('openai')) as unknown as {
@@ -112,7 +120,10 @@ function toProviderError(error: unknown): ProviderError {
     })
   }
   if (lower.includes('quota') || lower.includes('insufficient_quota')) {
-    return new ProviderError('quota', 'OpenAI quota exhausted.', { upstreamMessage: message, cause: error })
+    return new ProviderError('quota', 'OpenAI quota exhausted.', {
+      upstreamMessage: message,
+      cause: error,
+    })
   }
   if (lower.includes('timeout') || lower.includes('etimedout')) {
     return new ProviderError('timeout', 'OpenAI request timed out.', {
@@ -122,7 +133,13 @@ function toProviderError(error: unknown): ProviderError {
     })
   }
   if (lower.includes('api key') || lower.includes('401') || lower.includes('unauthorized')) {
-    return new ProviderError('auth', 'OpenAI authentication failed.', { upstreamMessage: message, cause: error })
+    return new ProviderError('auth', 'OpenAI authentication failed.', {
+      upstreamMessage: message,
+      cause: error,
+    })
   }
-  return new ProviderError('unknown', 'OpenAI request failed.', { upstreamMessage: message, cause: error })
+  return new ProviderError('unknown', 'OpenAI request failed.', {
+    upstreamMessage: message,
+    cause: error,
+  })
 }

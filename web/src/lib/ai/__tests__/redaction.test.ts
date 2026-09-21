@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sanitizeInput, sanitizeInputObject, registerRedactor, clearRedactors } from '../redaction'
 
-
 describe('sanitizeInput (default redactor)', () => {
   it('redacts email addresses', () => {
     expect(sanitizeInput('Contact me at jane@example.com')).toBe('Contact me at [REDACTED:email]')
@@ -26,7 +25,11 @@ describe('sanitizeInput (default redactor)', () => {
 
 describe('sanitizeInputObject', () => {
   it('recursively sanitizes string values in objects', () => {
-    const input = { name: 'Jane', email: 'jane@example.com', nested: { contact: 'jane@example.com' } }
+    const input = {
+      name: 'Jane',
+      email: 'jane@example.com',
+      nested: { contact: 'jane@example.com' },
+    }
     const result = sanitizeInputObject(input)
     expect(result.email).toBe('[REDACTED:email]')
     expect(result.nested.contact).toBe('[REDACTED:email]')
@@ -49,7 +52,9 @@ describe('sanitizeInputObject', () => {
 describe('custom redactors', () => {
   it('applies registered redactors after the default', () => {
     registerRedactor((text) => text.replace(/SECRET/g, '[REDACTED:secret]'))
-    expect(sanitizeInput('SECRET value jane@example.com')).toBe('[REDACTED:secret] value [REDACTED:email]')
+    expect(sanitizeInput('SECRET value jane@example.com')).toBe(
+      '[REDACTED:secret] value [REDACTED:email]',
+    )
     clearRedactors()
   })
 })

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { renderPrompt, getPromptTemplate, listPromptTemplates } from '../prompts/registry'
 import '../prompts/templates'
 
-
 describe('prompt template registry', () => {
   it('registers built-in templates', () => {
     const keys = listPromptTemplates().map((t) => t.featureKey)

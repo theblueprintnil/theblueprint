@@ -10,8 +10,8 @@ export function CtaBand() {
           Your brand. Your deals. One operating system.
         </h2>
         <p className="relative mx-auto mt-4 max-w-xl text-sm text-white/80">
-          Athletes build verified brands. Brands run compliant campaigns.
-          Start your 7-day trial and see it come together.
+          Athletes build verified brands. Brands run compliant campaigns. Start your 7-day trial and
+          see it come together.
         </p>
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link

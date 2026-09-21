@@ -75,26 +75,26 @@ export default function AboutPage() {
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">Our mission</span>
+            <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+              Our mission
+            </span>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">
               Make NIL sustainable for athletes and reliable for brands
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              NIL created an opportunity, but most athletes were handed a profile
-              page and left to figure the business out alone. Brands, meanwhile,
-              faced a fragmented, trust-starved marketplace.
+              NIL created an opportunity, but most athletes were handed a profile page and left to
+              figure the business out alone. Brands, meanwhile, faced a fragmented, trust-starved
+              marketplace.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              The Blueprint exists to change that. Athletes get a verified brand
-              package, a media kit they control, and a transparent deal workflow.
-              Brands get a curated directory, campaign tooling, and compliance
-              guardrails that make every engagement audit-ready.
+              The Blueprint exists to change that. Athletes get a verified brand package, a media
+              kit they control, and a transparent deal workflow. Brands get a curated directory,
+              campaign tooling, and compliance guardrails that make every engagement audit-ready.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              We are an operating platform, not a legal advisor. Every compliance
-              determination stays with qualified professionals — we make the
-              workflow, the record-keeping, and the disclosure reminders
-              effortless.
+              We are an operating platform, not a legal advisor. Every compliance determination
+              stays with qualified professionals — we make the workflow, the record-keeping, and the
+              disclosure reminders effortless.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-white p-7">
@@ -102,7 +102,14 @@ export default function AboutPage() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex gap-3">
                 <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-tint text-brand">
-                  <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    aria-hidden
+                  >
                     <path d="M3.5 8.5l3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
@@ -110,7 +117,14 @@ export default function AboutPage() {
               </li>
               <li className="flex gap-3">
                 <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-tint text-brand">
-                  <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    aria-hidden
+                  >
                     <path d="M3.5 8.5l3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
@@ -118,7 +132,14 @@ export default function AboutPage() {
               </li>
               <li className="flex gap-3">
                 <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-tint text-brand">
-                  <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    aria-hidden
+                  >
                     <path d="M3.5 8.5l3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
@@ -146,13 +167,18 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">Compliance framework</span>
+        <span className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+          Compliance framework
+        </span>
         <h2 className="mt-3 max-w-2xl font-display text-3xl font-bold tracking-tight text-ink">
           Three pillars keep every engagement honest
         </h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {PILLARS.map((pillar, index) => (
-            <div key={pillar.title} className="card-hover-lift rounded-2xl border border-border bg-white p-7">
+            <div
+              key={pillar.title}
+              className="card-hover-lift rounded-2xl border border-border bg-white p-7"
+            >
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-tint font-display text-lg font-extrabold text-brand">
                 {index + 1}
               </span>
