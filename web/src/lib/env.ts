@@ -28,7 +28,8 @@ export const ENV_SPECS: EnvVarSpec[] = [
   {
     name: 'CLERK_SECRET_KEY',
     tier: 'critical',
-    description: 'Clerk secret key for server-side authentication (server-only; never expose to the browser)',
+    description:
+      'Clerk secret key for server-side authentication (server-only; never expose to the browser)',
   },
   {
     name: 'NEXT_PUBLIC_SUPABASE_URL',
@@ -111,9 +112,25 @@ export const ENV_SPECS: EnvVarSpec[] = [
     description: 'Base URL of the agent-engine JSON-RPC gateway (e.g. http://localhost:8100).',
   },
   {
-    name: 'AGENT_SERVICE_TOKEN',
+    name: 'AGENT_JWT_ISSUER',
     tier: 'reserved',
-    description: 'Shared bearer token used to authenticate Server Action calls to the agent gateway.',
+    description: 'Issuer claim for internal agent JWTs minted by the web dispatcher.',
+  },
+  {
+    name: 'AGENT_JWT_AUDIENCE',
+    tier: 'reserved',
+    description:
+      'Audience claim for internal agent JWTs; must match the engine AGENT_JWT_AUDIENCE.',
+  },
+  {
+    name: 'AGENT_INTERNAL_JWT_KEY_PATH',
+    tier: 'reserved',
+    description: 'Path to the RS256 private PEM used to sign internal agent JWTs (server-only).',
+  },
+  {
+    name: 'AGENT_INTERNAL_JWT_KEY_ID',
+    tier: 'reserved',
+    description: 'Key id (kid) matching the pinned public PEM filename stem on the agent gateway.',
   },
 ]
 

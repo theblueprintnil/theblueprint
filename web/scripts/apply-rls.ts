@@ -8,20 +8,20 @@ function sqlLiteral(value: string): string {
   return `'${value.replace(/'/g, "''")}'`
 }
 
-async function ensureAppRole(): Promise<void> {
+async function ensureLoginRole(roleName: string): Promise<void> {
   const password = process.env.APP_DB_PASSWORD
   if (!password) {
     throw new Error('APP_DB_PASSWORD is not set. Add it to web/.env before applying RLS.')
   }
   const existing = await prisma.$queryRaw<{ rolname: string }[]>`
-    SELECT rolname FROM pg_roles WHERE rolname = 'app_user'
+    SELECT rolname FROM pg_roles WHERE rolname = ${roleName}
   `
   if (existing.length === 0) {
-    await prisma.$executeRawUnsafe(`CREATE ROLE app_user LOGIN PASSWORD ${sqlLiteral(password)}`)
-    console.log('created role app_user')
+    await prisma.$executeRawUnsafe(`CREATE ROLE ${roleName} LOGIN PASSWORD ${sqlLiteral(password)}`)
+    console.log(`created role ${roleName}`)
   } else {
-    await prisma.$executeRawUnsafe(`ALTER ROLE app_user LOGIN PASSWORD ${sqlLiteral(password)}`)
-    console.log('role app_user already exists, password refreshed')
+    await prisma.$executeRawUnsafe(`ALTER ROLE ${roleName} LOGIN PASSWORD ${sqlLiteral(password)}`)
+    console.log(`role ${roleName} already exists, password refreshed`)
   }
 }
 
@@ -39,7 +39,8 @@ async function applyPolicies(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  await ensureAppRole()
+  await ensureLoginRole('app_user')
+  await ensureLoginRole('app_agent')
   await applyPolicies()
   console.log('RLS bootstrap complete')
 }

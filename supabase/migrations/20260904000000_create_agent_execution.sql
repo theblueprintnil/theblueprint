@@ -61,4 +61,7 @@ create policy agent_task_review_update on public.agent_task_executions
     using (public.member_role(organization_id) in ('owner', 'admin'))
     with check (public.member_role(organization_id) in ('owner', 'admin'));
 
+grant select, insert, update on public.agent_task_executions to authenticated;
+grant select, insert, update on public.agent_task_executions to service_role;
+
 commit;

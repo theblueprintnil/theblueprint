@@ -4,7 +4,7 @@ import enum
 import uuid
 from typing import Any, Literal, TypedDict
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
 
@@ -35,6 +35,30 @@ class ExecutionStatus(str, enum.Enum):
     REVISION_REQUESTED = "REVISION_REQUESTED"
     PUBLISHED = "PUBLISHED"
     FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+    EXPIRED = "EXPIRED"
+    INPUT_REQUIRED = "INPUT_REQUIRED"
+
+
+TERMINAL_STATUSES = (
+    ExecutionStatus.PUBLISHED,
+    ExecutionStatus.FAILED,
+    ExecutionStatus.CANCELLED,
+    ExecutionStatus.EXPIRED,
+)
+
+SPEC_STATE_BY_STATUS = {
+    ExecutionStatus.QUEUED: "created",
+    ExecutionStatus.RUNNING: "working",
+    ExecutionStatus.PENDING_APPROVAL: "staged",
+    ExecutionStatus.APPROVED: "approved",
+    ExecutionStatus.REVISION_REQUESTED: "revision-requested",
+    ExecutionStatus.PUBLISHED: "completed",
+    ExecutionStatus.FAILED: "failed",
+    ExecutionStatus.CANCELLED: "cancelled",
+    ExecutionStatus.EXPIRED: "expired",
+    ExecutionStatus.INPUT_REQUIRED: "input-required",
+}
 
 
 class ApprovalDecision(str, enum.Enum):
@@ -104,6 +128,26 @@ class ResumeRunParams(CamelModel):
     review: HumanReviewInput
 
 
+class TaskRefParams(CamelModel):
+    organization_id: str
+    a2a_task_id: str | None = Field(default=None, alias="a2aTaskId")
+    execution_id: str | None = None
+
+    @model_validator(mode="after")
+    def _require_exactly_one_ref(self) -> "TaskRefParams":
+        if bool(self.a2a_task_id) == bool(self.execution_id):
+            raise ValueError("exactly one of a2aTaskId or executionId is required")
+        return self
+
+
+class TaskGetParams(TaskRefParams):
+    pass
+
+
+class TaskCancelParams(TaskRefParams):
+    reason: str | None = None
+
+
 class JsonRpcRequest(CamelModel):
     jsonrpc: Literal["2.0"] = "2.0"
     id: str | int
@@ -150,15 +194,35 @@ class A2ATask(CamelModel):
     thread_id: str
     tenant_id: str
     status: ExecutionStatus
+    state: str
+    a2a_task_id: str | None = Field(default=None, alias="a2aTaskId")
+    parent_task_id: str | None = None
+    depth: int = 0
+    created_at: str | None = None
     messages: list[A2AMessage] = Field(default_factory=list)
     artifacts: list[A2AArtifact] = Field(default_factory=list)
 
 
-class A2AAgentCard(CamelModel):
+class A2ASkill(CamelModel):
     name: str
+    input: dict[str, Any] = Field(default_factory=dict)
+    output: dict[str, Any] = Field(default_factory=dict)
+
+
+class A2AAgentCard(CamelModel):
+    id: str
+    name: str
+    version: str
+    publisher: str
     description: str
     url: str
-    version: str
+    skills: list[A2ASkill] = Field(default_factory=list)
+    scopes: list[str] = Field(default_factory=list)
+    min_tier: str = "RESTRICTED"
+    delegates: list[str] = Field(default_factory=list)
+    max_depth: int = 5
+    auth: dict[str, str] = Field(default_factory=dict)
+    transport: dict[str, Any] = Field(default_factory=dict)
 
 
 class NILGraphState(TypedDict, total=False):

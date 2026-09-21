@@ -173,4 +173,81 @@ BEGIN
 END $$;
 ROLLBACK;
 
+-- ---------------------------------------------------------------------------
+-- (8) a2a_audit_entries: append-only by trigger for EVERY role, including
+--     privileged ones (service_role / postgres). Integrity repair appends.
+-- ---------------------------------------------------------------------------
+BEGIN;
+DO $$
+DECLARE n int;
+BEGIN
+  INSERT INTO public.a2a_audit_entries
+    (organization_id, sequence, action, actor_type, outcome, prev_hash, entry_hash)
+  VALUES
+    ('aaaaaaaa-0000-4000-8000-00000000000a', 1, 'task_created',     'user',  'ok', repeat('0', 64), md5(random()::text)),
+    ('aaaaaaaa-0000-4000-8000-00000000000a', 2, 'task_dispatched', 'agent', 'ok', md5(random()::text), md5(random()::text));
+
+  BEGIN
+    UPDATE public.a2a_audit_entries SET outcome = 'tampered'
+      WHERE organization_id = 'aaaaaaaa-0000-4000-8000-00000000000a';
+    RAISE EXCEPTION 'FAIL: privileged role updated a2a_audit_entries';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM NOT LIKE 'a2a_audit_entries is append-only%' THEN
+      RAISE;
+    END IF;
+  END;
+
+  BEGIN
+    DELETE FROM public.a2a_audit_entries
+      WHERE organization_id = 'aaaaaaaa-0000-4000-8000-00000000000a';
+    RAISE EXCEPTION 'FAIL: privileged role deleted a2a_audit_entries';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM NOT LIKE 'a2a_audit_entries is append-only%' THEN
+      RAISE;
+    END IF;
+  END;
+
+  SELECT count(*) INTO n FROM public.a2a_audit_entries
+    WHERE organization_id = 'aaaaaaaa-0000-4000-8000-00000000000a';
+  IF n <> 2 THEN
+    RAISE EXCEPTION 'FAIL: a2a_audit_entries row count changed (rows=%)', n;
+  END IF;
+
+  BEGIN
+    INSERT INTO public.a2a_audit_entries
+      (organization_id, sequence, action, actor_type, outcome, prev_hash, entry_hash)
+    VALUES
+      ('aaaaaaaa-0000-4000-8000-00000000000a', 2, 'fork_attempt', 'agent', 'ok', repeat('0', 64), md5(random()::text));
+    RAISE EXCEPTION 'FAIL: duplicate (organization_id, sequence) was accepted';
+  EXCEPTION WHEN unique_violation THEN
+    NULL;
+  END;
+
+  RAISE NOTICE 'PASS    [8] a2a_audit_entries append-only for every role + unique sequence';
+END $$;
+ROLLBACK;
+
+-- ---------------------------------------------------------------------------
+-- (9) a2a ledger cross-tenant denial: Org A member cannot see Org B entries
+-- ---------------------------------------------------------------------------
+BEGIN;
+INSERT INTO public.a2a_audit_entries
+  (organization_id, sequence, action, actor_type, outcome, prev_hash, entry_hash)
+VALUES
+  ('aaaaaaaa-0000-4000-8000-00000000000b', 1, 'task_created', 'user', 'ok', repeat('0', 64), md5(random()::text));
+
+SET LOCAL ROLE authenticated;
+SET LOCAL request.jwt.claims TO '{"iss":"supabase","role":"authenticated","sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"}';
+DO $$
+DECLARE n int;
+BEGIN
+  SELECT count(*) INTO n FROM public.a2a_audit_entries
+    WHERE organization_id = 'aaaaaaaa-0000-4000-8000-00000000000b';
+  IF n <> 0 THEN
+    RAISE EXCEPTION 'ISOLATION FAIL: user A read Org B ledger entries (rows=%)', n;
+  END IF;
+  RAISE NOTICE 'PASS    [9] A cannot read Org B ledger entries';
+END $$;
+ROLLBACK;
+
 \echo 'TENANT ISOLATION: ALL CHECKS PASSED'

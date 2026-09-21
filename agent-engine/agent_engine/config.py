@@ -16,8 +16,16 @@ class Settings(BaseSettings):
     omni_route_zai_model: str = "glm-4-plus"
     llm_timeout_seconds: float = 60.0
 
-    agent_api_token: str = "YOUR_AGENT_API_TOKEN"
     agent_publish_endpoint: str | None = None
+
+    agent_database_url: str | None = None
+    agent_public_base_url: str = "http://localhost:8100"
+
+    agent_jwt_issuer: str = "https://agents.blueprint.local"
+    agent_jwt_audience: str = "blueprint-agent-gateway"
+    agent_jwt_leeway_seconds: int = 60
+    agent_jwks_path: str | None = None
+    agent_pinned_pem_dir: str | None = None
 
 
 @lru_cache(maxsize=1)

@@ -11,7 +11,8 @@ import { getMembershipRole, resolveActiveOrganization } from '@/lib/organization
 import { atLeast, can } from '@/lib/permissions'
 import { getSessionUser } from '@/lib/session'
 
-import { dispatchResume, dispatchStart } from './celery-client'
+import { dispatchCancelTask, dispatchResume, dispatchStart } from './celery-client'
+import { resolveAgeTier } from './tier'
 import type { AgentActionState, ApprovalDecision, BriefInput } from './types'
 
 interface ReviewInput {
@@ -163,7 +164,7 @@ export async function startAgentGeneration(input: StartInput): Promise<AgentActi
 
     const athlete = await prismaAuth.athlete.findUnique({
       where: { id: input.athleteId },
-      select: { id: true, userId: true },
+      select: { id: true, userId: true, dateOfBirth: true },
     })
     if (!athlete) return { ok: false, error: 'Athlete profile was not found.' }
     const athleteMembership = await getMembershipRole(athlete.userId, org.id)
@@ -172,7 +173,9 @@ export async function startAgentGeneration(input: StartInput): Promise<AgentActi
     }
 
     const threadId = `nil-${org.id}-${randomUUID()}`
+    const a2aTaskId = `a2a-${randomUUID()}`
     const brief: BriefInput = { ...input.brief, tenantId: org.id, athleteId: athlete.id }
+    const ageTier = resolveAgeTier(athlete.dateOfBirth)
 
     const executionId = await withOrgContext(user.id, org.id, async (tx) => {
       const created = await tx.agentTaskExecution.create({
@@ -183,6 +186,10 @@ export async function startAgentGeneration(input: StartInput): Promise<AgentActi
           threadId,
           status: 'QUEUED',
           inputRef: brief as unknown as Prisma.InputJsonValue,
+          a2aTaskId,
+          ageTier,
+          policySnapshotId: brief.policySnapshotId,
+          depth: 0,
         },
         select: { id: true },
       })
@@ -234,6 +241,57 @@ export async function startAgentGeneration(input: StartInput): Promise<AgentActi
 
     revalidatePath('/app/studio')
     return { ok: true, executionId }
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : 'Unexpected error.' }
+  }
+}
+
+interface CancelInput {
+  executionId: string
+  reason?: string | null
+}
+
+export async function cancelAgentExecution(input: CancelInput): Promise<AgentActionState> {
+  try {
+    const { user, org } = await requireAuthorizedUser()
+    const role = await getMembershipRole(user.id, org.id)
+    if (!role || !atLeast(role, 'ADMIN')) {
+      return { ok: false, error: 'Only owners and admins can cancel agent tasks.' }
+    }
+
+    const execution = await prismaAuth.agentTaskExecution.findFirst({
+      where: { id: input.executionId, organizationId: org.id },
+      select: { id: true, status: true },
+    })
+    if (!execution) {
+      return { ok: false, error: 'Execution was not found in this organization.' }
+    }
+    const terminal = ['PUBLISHED', 'FAILED', 'CANCELLED', 'EXPIRED']
+    if (terminal.includes(execution.status)) {
+      return { ok: false, error: 'This execution is already in a terminal state.' }
+    }
+
+    await dispatchCancelTask({
+      organizationId: org.id,
+      executionId: execution.id,
+      reason: (input.reason ?? '').trim() || undefined,
+    })
+
+    await withOrgContext(user.id, org.id, async (tx) => {
+      await tx.auditLog.create({
+        data: {
+          action: 'AGENT_EXECUTION_CANCEL_REQUESTED',
+          entityType: 'AgentTaskExecution',
+          entityId: execution.id,
+          actorId: user.id,
+          organizationId: org.id,
+          details: JSON.stringify({ requestedBy: user.id }),
+        },
+      })
+    })
+
+    revalidatePath('/app/studio')
+    return { ok: true, executionId: execution.id }
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : 'Unexpected error.' }
   }

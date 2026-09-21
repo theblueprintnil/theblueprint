@@ -5,12 +5,13 @@ LangGraph + Celery orchestration for The Blueprint NIL content generation, compl
 ## Layout
 
 - `agent_engine/schemas.py` — Pydantic v2 domain models and JSON-RPC 2.0 / A2A envelopes.
+- `agent_engine/audit.py` — canonical JSON, SHA-256 chain hashing, and chain verification for the A2A audit ledger.
 - `agent_engine/llm.py` — OmniRoute (OpenAI-compatible) gateway routing to DeepSeek and Z.ai.
 - `agent_engine/rules.py` — deterministic FTC / NCAA / brand-exclusivity compliance checks.
-- `agent_engine/store.py` — tenant-scoped PostgreSQL persistence (status machine, audit rows).
+- `agent_engine/store.py` — tenant-scoped PostgreSQL persistence (status machine, hash-chained `A2AAuditEntry` ledger, RLS-bound `app_agent` request sessions).
 - `agent_engine/agents_workflow.py` — LangGraph graph with Content, Compliance, HITL pause, and Publisher nodes.
 - `agent_engine/tasks.py` — Celery tasks `run_nil_generation_pipeline` and `resume_nil_pipeline_after_approval` with redelivery-safe status guards.
-- `agent_engine/api.py` — FastAPI JSON-RPC 2.0 gateway that dispatches Celery tasks.
+- `agent_engine/api.py` — FastAPI JSON-RPC 2.0 gateway: `/.well-known/agent.json` card, `agent.run`, `agent.resume`, and `task.get` / `task.cancel` on `/agent/task`.
 - `worker.py` — subscriber entrypoint re-exporting the Celery app for Vercel.
 
 ## Run locally (Redis broker)
@@ -30,7 +31,7 @@ Locally the Celery broker and result backend are `REDIS_URL` (default `redis://l
 `pyproject.toml` declares the whole service: `[tool.vercel] entrypoint = "agent_engine.api:app"` builds the FastAPI gateway as the web function, and `[[tool.vercel.subscribers]] entrypoint = "worker:app"` compiles the Celery worker into a private queue-triggered function. When the `VERCEL` environment variable is set, `tasks.py` uses `vercel://` as the broker and `vercel-runtime-cache://` as the result backend, so no Redis needs to be provisioned. Dependencies come from the `pyproject.toml` `dependencies` array (`.vercelignore` excludes `requirements.txt` so the build reads a single dependency source).
 
 1. Create a Vercel project rooted at `agent-engine/`.
-2. Set env vars: `DATABASE_URL`, `AGENT_API_TOKEN`, `OMNIROUTE_BASE_URL`, `OMNIROUTE_API_KEY`, and `AGENT_PUBLISH_ENDPOINT` when publishing is enabled. `REDIS_URL` is not needed.
+2. Set env vars: `DATABASE_URL`, `AGENT_DATABASE_URL` (the RLS-bound `app_agent` connection for the gateway request path), `AGENT_PINNED_PEM_DIR` (pinned public PEMs), `AGENT_JWT_ISSUER`, `AGENT_JWT_AUDIENCE`, `OMNIROUTE_BASE_URL`, `OMNIROUTE_API_KEY`, and `AGENT_PUBLISH_ENDPOINT` when publishing is enabled. There is no shared token any more; the gateway rejects every caller without a verifiable JWT. `REDIS_URL` is not needed.
 3. `DATABASE_URL` must point at hosted Postgres (Supabase recommended). The LangGraph `PostgresSaver.setup()` DDL and the pooled worker connections prefer the session/direct connection string over a transaction-mode pooler.
 4. Deploy with `vc deploy`, or run `vercel dev` (CLI >= 58.9.0) to run the gateway and the worker locally against Vercel Queues.
 5. Vercel Queues is at-least-once: both tasks re-check `AgentTaskExecution.status` before running and return a no-op summary (`"duplicate": true`) on redelivery instead of re-executing or flipping a terminal status to FAILED.

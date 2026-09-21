@@ -23,24 +23,24 @@ npx prisma db seed          # demo data
 
 ### Environment variables
 
-| Variable                        | Required | Purpose                                                                     |
-| ------------------------------- | -------- | --------------------------------------------------------------------------- |
-| `DATABASE_URL`                  | yes      | Privileged Prisma connection used for auth reads, migrations, RLS bootstrap |
-| `DATABASE_URL_APP`              | yes      | Row-level-security-scoped `app_user` connection used for all tenant queries |
-| `APP_DB_PASSWORD`               | yes      | Password applied to the `app_user` role by `npm run db:rls`                 |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | yes  | Clerk publishable key (browser SDK; `pk_…`) — required by `clerkMiddleware` |
-| `CLERK_SECRET_KEY`              | yes      | Clerk secret key (server-only; never expose to the browser)                 |
-| `NEXT_PUBLIC_SUPABASE_URL`      | reserved | Placeholder for the planned Supabase migration (Phase 2+)                   |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | reserved | Placeholder for the Supabase browser client                                 |
-| `SUPABASE_SERVICE_ROLE_KEY`     | reserved | Server-only Supabase key; never expose to the client                        |
-| `SESSION_SECRET`                | reserved | Future signing secret for stateless session tokens                          |
-| `STRIPE_SECRET_KEY`             | billing  | Stripe API secret key (server-only; never expose to the browser)            |
-| `STRIPE_WEBHOOK_SECRET`         | billing  | Stripe webhook signing secret used to verify event signatures               |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | billing | Stripe publishable key (safe for browser use)                          |
-| `STRIPE_PRICE_STARTER`          | billing  | Stripe Price ID for the Starter plan                                        |
-| `STRIPE_PRICE_GROWTH`           | billing  | Stripe Price ID for the Growth plan                                         |
-| `STRIPE_PRICE_PREMIUM`          | billing  | Stripe Price ID for the Premium plan                                        |
-| `NEXT_PUBLIC_APP_URL`           | optional | Canonical app URL for redirects/links                                       |
+| Variable                             | Required | Purpose                                                                     |
+| ------------------------------------ | -------- | --------------------------------------------------------------------------- |
+| `DATABASE_URL`                       | yes      | Privileged Prisma connection used for auth reads, migrations, RLS bootstrap |
+| `DATABASE_URL_APP`                   | yes      | Row-level-security-scoped `app_user` connection used for all tenant queries |
+| `APP_DB_PASSWORD`                    | yes      | Password applied to the `app_user` role by `npm run db:rls`                 |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`  | yes      | Clerk publishable key (browser SDK; `pk_…`) — required by `clerkMiddleware` |
+| `CLERK_SECRET_KEY`                   | yes      | Clerk secret key (server-only; never expose to the browser)                 |
+| `NEXT_PUBLIC_SUPABASE_URL`           | reserved | Placeholder for the planned Supabase migration (Phase 2+)                   |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`      | reserved | Placeholder for the Supabase browser client                                 |
+| `SUPABASE_SERVICE_ROLE_KEY`          | reserved | Server-only Supabase key; never expose to the client                        |
+| `SESSION_SECRET`                     | reserved | Future signing secret for stateless session tokens                          |
+| `STRIPE_SECRET_KEY`                  | billing  | Stripe API secret key (server-only; never expose to the browser)            |
+| `STRIPE_WEBHOOK_SECRET`              | billing  | Stripe webhook signing secret used to verify event signatures               |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | billing  | Stripe publishable key (safe for browser use)                               |
+| `STRIPE_PRICE_STARTER`               | billing  | Stripe Price ID for the Starter plan                                        |
+| `STRIPE_PRICE_GROWTH`                | billing  | Stripe Price ID for the Growth plan                                         |
+| `STRIPE_PRICE_PREMIUM`               | billing  | Stripe Price ID for the Premium plan                                        |
+| `NEXT_PUBLIC_APP_URL`                | optional | Canonical app URL for redirects/links                                       |
 
 Startup validates that every required variable is present (`src/lib/env.ts`) and fails fast with a readable error otherwise. Stripe variables are `reserved` so the app still boots without billing configured; upgrade buttons are disabled until the price IDs are set.
 
@@ -82,6 +82,8 @@ Flow: `/signup` → `/onboarding` (creates your first organization on the 7-day 
 
 The app deploys to Vercel as a standard Next.js project (Node 22 enforced via `package.json` `engines`).
 
+Run `npm run preflight` from `web/` before and after wiring environment variables — it validates the cross-service pairings (app_user password match, shared web/engine database, engine session-mode connection, `AGENT_SERVICE_TOKEN` vs the engine's `AGENT_API_TOKEN`, Clerk/Stripe key modes). Add `--prod` to enforce live keys, `--connect` to open the database links, and `--probe` to authorize-check the deployed gateway. The dependency-ordered launch checklist is [`../docs/GO-LIVE.md`](../docs/GO-LIVE.md).
+
 1. **Create the project** — import the repository in Vercel and set Root Directory to `web/`.
 2. **Provision Postgres** — Supabase is recommended (it matches the `supabase/` SQL foundation in this repo). One-time bootstrap from a workstation against the production database:
    ```bash
@@ -100,14 +102,15 @@ The app deploys to Vercel as a standard Next.js project (Node 22 enforced via `p
 
 ## Scripts
 
-| Command                           | What it does                                                               |
-| --------------------------------- | -------------------------------------------------------------------------- |
-| `npm run lint`                    | ESLint (flat config, next/core-web-vitals + TS, Prettier-compat last)      |
-| `npm run format` / `format:check` | Prettier write/check                                                       |
-| `npm run typecheck`               | `tsc --noEmit`                                                             |
-| `npm run test`                    | Vitest unit tests                                                          |
-| `npm run e2e`                     | Playwright end-to-end suite (auto-starts `next dev`; needs the DB running) |
-| `npm run db:rls`                  | Recreates/refreshes `app_user` and applies `prisma/rls.sql`                |
+| Command                           | What it does                                                                        |
+| --------------------------------- | ----------------------------------------------------------------------------------- |
+| `npm run lint`                    | ESLint (flat config, next/core-web-vitals + TS, Prettier-compat last)               |
+| `npm run format` / `format:check` | Prettier write/check                                                                |
+| `npm run typecheck`               | `tsc --noEmit`                                                                      |
+| `npm run test`                    | Vitest unit tests                                                                   |
+| `npm run e2e`                     | Playwright end-to-end suite (auto-starts `next dev`; needs the DB running)          |
+| `npm run db:rls`                  | Recreates/refreshes `app_user` and applies `prisma/rls.sql`                         |
+| `npm run preflight`               | Validates go-live env pairings across web + agent-engine (see `../docs/GO-LIVE.md`) |
 
 ## Testing
 

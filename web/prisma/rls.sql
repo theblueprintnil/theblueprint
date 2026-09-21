@@ -215,3 +215,110 @@ CREATE POLICY agent_task_review_update ON "AgentTaskExecution" FOR UPDATE
   WITH CHECK (
     app_user_role_in("AgentTaskExecution"."organizationId") IN ('OWNER', 'ADMIN')
   );
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "GuardianLink" TO app_user;
+GRANT SELECT, INSERT ON TABLE "GuardianConsent" TO app_user;
+GRANT SELECT, INSERT, UPDATE ON TABLE "AgentRegistration" TO app_user;
+
+ALTER TABLE "GuardianLink" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "GuardianLink" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "GuardianConsent" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "GuardianConsent" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AgentRegistration" ENABLE ROW LEVEL SECURITY;
+
+GRANT USAGE ON SCHEMA public TO app_agent;
+
+GRANT SELECT, INSERT ON TABLE "A2AAuditEntry" TO app_user;
+
+ALTER TABLE "A2AAuditEntry" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "A2AAuditEntry" FORCE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS a2a_audit_select ON "A2AAuditEntry";
+CREATE POLICY a2a_audit_select ON "A2AAuditEntry" FOR SELECT
+  USING (
+    app_user_role_in("A2AAuditEntry"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS a2a_audit_insert ON "A2AAuditEntry";
+CREATE POLICY a2a_audit_insert ON "A2AAuditEntry" FOR INSERT
+  WITH CHECK (
+    app_user_role_in("A2AAuditEntry"."organizationId") IS NOT NULL
+  );
+
+GRANT SELECT, INSERT, UPDATE ON TABLE "AgentTaskExecution" TO app_agent;
+GRANT SELECT, INSERT ON TABLE "A2AAuditEntry" TO app_agent;
+GRANT SELECT, INSERT ON TABLE "AuditLog" TO app_agent;
+GRANT SELECT ON TABLE "AgentRegistration" TO app_agent;
+
+DROP POLICY IF EXISTS agent_task_agent_select ON "AgentTaskExecution";
+CREATE POLICY agent_task_agent_select ON "AgentTaskExecution" FOR SELECT TO app_agent
+  USING (
+    current_setting('app.current_org_id', true) = "AgentTaskExecution"."organizationId"
+  );
+
+DROP POLICY IF EXISTS agent_task_agent_insert ON "AgentTaskExecution";
+CREATE POLICY agent_task_agent_insert ON "AgentTaskExecution" FOR INSERT TO app_agent
+  WITH CHECK (
+    current_setting('app.current_org_id', true) = "AgentTaskExecution"."organizationId"
+  );
+
+DROP POLICY IF EXISTS agent_task_agent_update ON "AgentTaskExecution";
+CREATE POLICY agent_task_agent_update ON "AgentTaskExecution" FOR UPDATE TO app_agent
+  USING (
+    current_setting('app.current_org_id', true) = "AgentTaskExecution"."organizationId"
+  )
+  WITH CHECK (
+    current_setting('app.current_org_id', true) = "AgentTaskExecution"."organizationId"
+  );
+
+DROP POLICY IF EXISTS a2a_audit_agent_select ON "A2AAuditEntry";
+CREATE POLICY a2a_audit_agent_select ON "A2AAuditEntry" FOR SELECT TO app_agent
+  USING (
+    current_setting('app.current_org_id', true) = "A2AAuditEntry"."organizationId"
+  );
+
+DROP POLICY IF EXISTS a2a_audit_agent_insert ON "A2AAuditEntry";
+CREATE POLICY a2a_audit_agent_insert ON "A2AAuditEntry" FOR INSERT TO app_agent
+  WITH CHECK (
+    current_setting('app.current_org_id', true) = "A2AAuditEntry"."organizationId"
+  );
+
+DROP POLICY IF EXISTS agent_registration_agent_read ON "AgentRegistration";
+CREATE POLICY agent_registration_agent_read ON "AgentRegistration" FOR SELECT TO app_agent
+  USING (
+    "AgentRegistration"."orgId" IS NULL
+    OR "AgentRegistration"."orgId" = current_setting('app.current_org_id', true)
+  );
+ALTER TABLE "AgentRegistration" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AgentKey" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "AgentKey" FORCE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS guardian_link_org_scope ON "GuardianLink";
+CREATE POLICY guardian_link_org_scope ON "GuardianLink" FOR ALL
+  USING (
+    app_user_role_in("GuardianLink"."organizationId") IS NOT NULL
+  )
+  WITH CHECK (
+    app_user_role_in("GuardianLink"."organizationId") IN ('OWNER', 'ADMIN')
+  );
+
+DROP POLICY IF EXISTS guardian_consent_select ON "GuardianConsent";
+CREATE POLICY guardian_consent_select ON "GuardianConsent" FOR SELECT
+  USING (
+    app_user_role_in("GuardianConsent"."organizationId") IS NOT NULL
+  );
+
+DROP POLICY IF EXISTS guardian_consent_insert ON "GuardianConsent";
+CREATE POLICY guardian_consent_insert ON "GuardianConsent" FOR INSERT
+  WITH CHECK (
+    app_user_role_in("GuardianConsent"."organizationId") IN ('OWNER', 'ADMIN')
+  );
+
+DROP POLICY IF EXISTS agent_registration_org_scope ON "AgentRegistration";
+CREATE POLICY agent_registration_org_scope ON "AgentRegistration" FOR ALL
+  USING (
+    app_user_role_in("AgentRegistration"."orgId") IS NOT NULL
+  )
+  WITH CHECK (
+    app_user_role_in("AgentRegistration"."orgId") IN ('OWNER', 'ADMIN')
+  );

@@ -93,6 +93,9 @@ enum AgentExecutionStatus {
   REVISION_REQUESTED
   PUBLISHED
   FAILED
+  CANCELLED
+  EXPIRED
+  INPUT_REQUIRED
 }
 
 enum RiskSeverity {
@@ -134,6 +137,8 @@ model User {
 }
 
 model Organization {
+  autonomyThresholdMinorUnits Int     @default(25000)
+  autonomyKillSwitch          Boolean @default(false)
   id            String        @id @default(uuid())
   name          String
   slug          String        @unique
@@ -172,6 +177,8 @@ model Membership {
 }
 
 model Athlete {
+  dateOfBirth      DateTime?
+  ageTierVerifiedAt DateTime?
   id                 String   @id @default(uuid())
   userId             String   @unique
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -400,6 +407,17 @@ model AgentTaskExecution {
   reviewerFeedback   String?
   publishedPostUrl   String?
   errorMessage       String?
+  a2aTaskId          String?
+  traceId            String?
+  parentTaskId       String?
+  depth              Int                   @default(0)
+  costMinorUnits     Int                   @default(0)
+  ageTier            String?
+  policySnapshotId   String?
+  cosignState        String?
+  expiresAt          DateTime?
+  cancelledAt        DateTime?
+  auditSequence      BigInt?
   startedAt          DateTime?
   completedAt        DateTime?
   createdAt          DateTime              @default(now())
@@ -408,4 +426,86 @@ model AgentTaskExecution {
   @@unique([organizationId, threadId])
   @@index([organizationId, status])
   @@index([organizationId, createdAt])
+  @@index([a2aTaskId])
+}
+
+model GuardianLink {
+  id             String    @id @default(uuid())
+  organizationId String
+  athleteId      String
+  guardianUserId String
+  relationship   String
+  verification   String
+  effectiveFrom  DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@unique([athleteId, guardianUserId])
+  @@index([organizationId])
+  @@index([guardianUserId])
+}
+
+model GuardianConsent {
+  id              String    @id @default(uuid())
+  organizationId  String
+  guardianLinkId  String
+  scope           String
+  grantedByUserId String
+  grantedAt       DateTime  @default(now())
+  revokedAt       DateTime?
+  payload         Json?
+
+  @@index([organizationId])
+  @@index([guardianLinkId])
+}
+
+model AgentRegistration {
+  id        String   @id @default(uuid())
+  agentId   String   @unique
+  name      String
+  publisher String
+  orgId     String?
+  scopes    Json
+  minTier   String
+  maxDepth  Int      @default(2)
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orgId])
+}
+
+model AgentKey {
+  id           String    @id @default(uuid())
+  agentId      String
+  kid          String    @unique
+  algorithm    String
+  publicKeyPem String
+  notBefore    DateTime
+  notAfter     DateTime?
+  revokedAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([agentId])
+}
+
+model A2AAuditEntry {
+  id             String   @id @default(uuid())
+  organizationId String
+  sequence       BigInt
+  action         String
+  actorType      String
+  actorId        String?
+  actorJti       String?
+  targetType     String?
+  targetId       String?
+  outcome        String
+  payload        Json?
+  prevHash       String
+  entryHash      String
+  createdAt      DateTime @default(now())
+
+  @@unique([organizationId, sequence])
+  @@index([organizationId, createdAt])
+  @@index([action])
 }

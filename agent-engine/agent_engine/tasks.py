@@ -38,6 +38,13 @@ def _current_status(organization_id: str, execution_id: str) -> str | None:
     return str(row.get("status"))
 
 
+RUNNABLE_STATUSES = {ExecutionStatus.QUEUED.value, ExecutionStatus.RUNNING.value}
+RESUMABLE_STATUSES = {
+    ExecutionStatus.APPROVED.value,
+    ExecutionStatus.REVISION_REQUESTED.value,
+}
+
+
 def _noop_result(organization_id: str, execution_id: str, thread_id: str) -> dict:
     status = _current_status(organization_id, execution_id)
     return {
@@ -63,8 +70,7 @@ def run_nil_generation_pipeline(
     thread_id: str,
     brief: dict,
 ) -> dict:
-    runnable = {ExecutionStatus.QUEUED.value, ExecutionStatus.RUNNING.value}
-    if _already_advanced(organization_id, execution_id, runnable):
+    if _already_advanced(organization_id, execution_id, RUNNABLE_STATUSES):
         return _noop_result(organization_id, execution_id, thread_id)
     try:
         brief_model = NILBrief.model_validate(brief)
@@ -86,8 +92,7 @@ def resume_nil_pipeline_after_approval(
     thread_id: str,
     review: dict,
 ) -> dict:
-    resumable = {ExecutionStatus.APPROVED.value, ExecutionStatus.REVISION_REQUESTED.value}
-    if _already_advanced(organization_id, execution_id, resumable):
+    if _already_advanced(organization_id, execution_id, RESUMABLE_STATUSES):
         return _noop_result(organization_id, execution_id, thread_id)
     try:
         review_model = HumanReviewInput.model_validate(review)
