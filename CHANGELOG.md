@@ -32,5 +32,5 @@ All notable changes to this project are documented here. The format follows
   pinned-PEM verification, scoped agent identity (`docs/adr/0002`).
 - Baseline formatting across `web/` via Prettier.
 
-[Unreleased]: https://github.com/sroe001/The-Blueprint---NIL-Athlete-Promotion-Site/compare/main...HEAD
-[0.1.0]: https://github.com/sroe001/The-Blueprint---NIL-Athlete-Promotion-Site/releases/tag/v0.1.0
+[Unreleased]: https://github.com/sroe001/The-Blueprint/compare/main...HEAD
+[0.1.0]: https://github.com/sroe001/The-Blueprint/releases/tag/v0.1.0
