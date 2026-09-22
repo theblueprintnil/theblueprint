@@ -1,6 +1,6 @@
 # Go-Live Runbook
 
-Dependency-ordered production launch checklist for The Blueprint (web + agent-engine). Background and local development live in `web/README.md` and `agent-engine/README.md`; this document only sequences the production steps. Every unchecked box is a human console step unless marked _(workstation)_.
+Dependency-ordered production launch checklist for The Blueprint (web + agent-engine). Background and local development live in `web/README.md` and `agent-engine/README.md`; this document only sequences the production steps. Every unchecked box is a human console step unless marked _(workstation)_. Both Vercel projects are GitHub-connected imports of this one repository (see ADR-0008): pushes to `main` auto-deploy Production and pull requests receive Preview deployments.
 
 Run the preflight validator from `web/` between phases:
 
@@ -34,16 +34,20 @@ npm run preflight -- --prod       # enforce live keys (Clerk pk_/sk_live_, Strip
 
 ## Phase 3 — agent-engine on Vercel
 
-- [ ] Create a Vercel project rooted at `agent-engine/`
-- [ ] Env vars (Production + Preview): `DATABASE_URL` (**direct** string), `AGENT_API_TOKEN` (generate a long random secret and store it securely — web needs the identical value), `OMNIROUTE_BASE_URL`, `OMNIROUTE_API_KEY`, optional `AGENT_PUBLISH_ENDPOINT`
-- [ ] Deploy (`vc deploy`)
+- [ ] In the Vercel dashboard: **Add New… → Project → Import** the GitHub repository, set **Root Directory** to `agent-engine/`, Production branch `main`
+- [ ] Env vars (Production + Preview): `DATABASE_URL` (**direct** string — privileged, worker/checkpointer only), `AGENT_DATABASE_URL` (RLS-bound `app_agent` connection used by the gateway request path), `OMNIROUTE_BASE_URL`, `OMNIROUTE_API_KEY`, optional `AGENT_PUBLISH_ENDPOINT`, `AGENT_PUBLIC_BASE_URL` (the deployed engine URL; `REDIS_URL` is not needed — `tasks.py` switches to Vercel Queues when `VERCEL` is set)
+- [ ] Web→engine auth (JWT-only since M2; the old `AGENT_API_TOKEN` shared secret no longer exists): register the web dispatcher's RS256 **public** key with the engine via `AGENT_JWKS_PATH` (JWKS document) or `AGENT_PINNED_PEM_DIR` (pinned PEM files) so tokens with `kid=internal-web` verify; keep `AGENT_JWT_ISSUER` and `AGENT_JWT_AUDIENCE` identical on both sides. Public key material is safe to commit to the repo; private keys are not
+- [ ] Deploy and verify `GET <engine-url>/health` returns `{"status":"ok"}`
 - [ ] **Function duration**: raise the queue-triggered worker function's max duration to **≥ 600 s** (Pro plan) — `task_time_limit=600` / `task_soft_time_limit=540` in `agent_engine/tasks.py`. On Hobby, lower `task_time_limit` instead and redeploy.
-- [ ] Verify `GET <engine-url>/health` returns `{"status":"ok"}`
 
 ## Phase 4 — web on Vercel
 
-- [ ] Create a Vercel project with Root Directory `web/`
-- [ ] Env vars (Production + Preview): Clerk **production** keys, `DATABASE_URL` + `DATABASE_URL_APP` (pooled strings; `app_user` user + `APP_DB_PASSWORD` password), `APP_DB_PASSWORD`, `NEXT_PUBLIC_APP_URL=https://<domain>`, `AGENT_SERVICE_URL=<engine URL>`, `AGENT_SERVICE_TOKEN` (identical to `AGENT_API_TOKEN`)
+- [ ] In the Vercel dashboard: **Add New… → Project → Import** the same GitHub repository as a **second** project, set **Root Directory** to `web/`, Production branch `main`. Framework auto-detects as Next.js; Node 22 comes from `package.json` `engines` and `postinstall` runs `prisma generate` during dependency install
+- [ ] Env vars (Production **and** Preview) — set these **before the first deploy**; the build fails fast without the critical tier (`src/lib/env.ts`):
+  - Critical: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` (Clerk **production** instance), `DATABASE_URL` + `DATABASE_URL_APP` (pooled strings; `app_user` user + `APP_DB_PASSWORD` password), `APP_DB_PASSWORD`
+  - App URLs: `NEXT_PUBLIC_APP_URL=https://<domain>`, `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup`
+  - Agent orchestration (Studio dispatch): `AGENT_SERVICE_URL=<engine URL>`, `AGENT_JWT_ISSUER`, `AGENT_JWT_AUDIENCE`, `AGENT_INTERNAL_JWT_KEY` (inline RS256 private PEM — Vercel cannot mount key files; paste with newlines intact) **or** `AGENT_INTERNAL_JWT_KEY_PATH` (workstation/container filesystems only), `AGENT_INTERNAL_JWT_KEY_ID=internal-web`
+  - Reserved (app boots without them until billing/Supabase go live): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_PRICE_*`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - [ ] Deploy and confirm the production URL renders
 - [ ] Mirror the Vercel values into `web/.env` and run `npm run preflight --prod --probe` — zero FAIL
 

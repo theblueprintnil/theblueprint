@@ -95,7 +95,7 @@ Run `npm run preflight` from `web/` before and after wiring environment variable
    - `DATABASE_URL`, `DATABASE_URL_APP`, `APP_DB_PASSWORD` — prefer the pooled connection strings for runtime traffic; run the bootstrap above against the direct connection.
    - `NEXT_PUBLIC_APP_URL` — the production URL.
    - Stripe (when billing goes live): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_PRICE_*`.
-   - Agent orchestration: `AGENT_SERVICE_URL` (deployed agent-engine URL) and `AGENT_SERVICE_TOKEN` (must equal the engine's `AGENT_API_TOKEN`).
+   - Agent orchestration: `AGENT_SERVICE_URL` (deployed agent-engine URL) plus the JWT signing vars — `AGENT_INTERNAL_JWT_KEY` (inline private PEM; on Vercel a key file cannot be mounted) or `AGENT_INTERNAL_JWT_KEY_PATH`, `AGENT_INTERNAL_JWT_KEY_ID`, and matching `AGENT_JWT_ISSUER` / `AGENT_JWT_AUDIENCE` on the engine side (see `../docs/GO-LIVE.md` Phase 3).
 4. **Clerk production checklist** — create a production instance, register the production domain, and add `https://<your-domain>/onboarding` to the allowed redirect URLs.
 5. **Stripe webhook** — create a production endpoint at `https://<your-domain>/api/stripe/webhook` with the events listed in the billing setup above.
 6. **Optional seed** — with `DATABASE_URL` pointing at the production database, `npx prisma db seed` loads the demo tenant.

@@ -1,6 +1,6 @@
 import { createVerify, generateKeyPairSync } from 'node:crypto'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { mintAgentJwt } from './agent-jwt'
 
@@ -54,5 +54,18 @@ describe('mintAgentJwt', () => {
     const claims = decodeSegment(mint('org-42').split('.')[1])
     expect(claims.tenant_id).toBe('org-42')
     expect(claims.org_id).toBe('org-42')
+  })
+
+  it('signs with the AGENT_INTERNAL_JWT_KEY inline PEM when no override is provided', () => {
+    vi.stubEnv('AGENT_INTERNAL_JWT_KEY', privateKey)
+    try {
+      const [header, payload, signature] = mintAgentJwt({ organizationId: 'org-inline' }).split('.')
+      const verifier = createVerify('RSA-SHA256')
+      verifier.update(`${header}.${payload}`)
+      expect(verifier.verify(publicKey, Buffer.from(signature, 'base64url'))).toBe(true)
+      expect(decodeSegment(payload).org_id).toBe('org-inline')
+    } finally {
+      vi.unstubAllEnvs()
+    }
   })
 })

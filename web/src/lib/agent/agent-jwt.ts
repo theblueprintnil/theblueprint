@@ -14,7 +14,6 @@ export interface MintAgentJwtInput {
 
 const ISSUER = process.env.AGENT_JWT_ISSUER ?? 'https://agents.blueprint.local'
 const AUDIENCE = process.env.AGENT_JWT_AUDIENCE ?? 'blueprint-agent-gateway'
-const KEY_PATH = process.env.AGENT_INTERNAL_JWT_KEY_PATH
 const KEY_ID = process.env.AGENT_INTERNAL_JWT_KEY_ID ?? 'internal-web'
 const AGENT_ID = process.env.AGENT_INTERNAL_AGENT_ID ?? 'blueprint-web-dispatcher'
 
@@ -26,13 +25,16 @@ function toBase64Url(value: string): string {
 
 function resolvePrivateKey(override?: string): string {
   if (override) return override
-  if (!KEY_PATH) {
+  const inlineKey = process.env.AGENT_INTERNAL_JWT_KEY?.trim()
+  if (inlineKey) return inlineKey
+  const keyPath = process.env.AGENT_INTERNAL_JWT_KEY_PATH
+  if (!keyPath) {
     throw new Error(
-      'AGENT_INTERNAL_JWT_KEY_PATH is not configured. See web/.env.example. Shared secrets are retired.',
+      'AGENT_INTERNAL_JWT_KEY or AGENT_INTERNAL_JWT_KEY_PATH is not configured. See web/.env.example. Shared secrets are retired.',
     )
   }
   if (cachedKey === null) {
-    const loaded = readFileSync(KEY_PATH, 'utf8')
+    const loaded = readFileSync(keyPath, 'utf8')
     cachedKey = loaded
     return loaded
   }
