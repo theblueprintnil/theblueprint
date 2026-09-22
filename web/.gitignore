@@ -46,3 +46,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/.claude/
+/.grok/
+/.codebuddy/
+/.aider-desk/
+/.hermes/
+/.inferencesh/

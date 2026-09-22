@@ -1,3 +1,4 @@
+import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 
 import { Logo } from '@/components/brand/Logo'
@@ -28,18 +29,37 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-3">
-          <Link
-            href="/login"
-            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-ink transition hover:text-brand sm:inline-flex"
+          <Show
+            when="signed-out"
+            fallback={
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/app/dashboard"
+                  className="hidden rounded-full px-4 py-2 text-sm font-semibold text-ink transition hover:text-brand sm:inline-flex"
+                >
+                  Go to app
+                </Link>
+                <UserButton />
+              </div>
+            }
           >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="inline-flex items-center rounded-full brand-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,127,255,0.32)] transition hover:opacity-90"
-          >
-            Start your trial
-          </Link>
+            <SignInButton>
+              <button
+                type="button"
+                className="hidden cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-ink transition hover:text-brand sm:inline-flex"
+              >
+                Sign in
+              </button>
+            </SignInButton>
+            <SignUpButton>
+              <button
+                type="button"
+                className="inline-flex cursor-pointer items-center rounded-full brand-gradient px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,127,255,0.32)] transition hover:opacity-90"
+              >
+                Start your trial
+              </button>
+            </SignUpButton>
+          </Show>
         </div>
       </div>
     </header>
