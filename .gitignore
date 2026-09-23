@@ -22,6 +22,9 @@ playwright/.cache/
 .env.*
 !.env.example
 
+# JWT keys (private keys only - public keys are committed)
+keys/*.private.pem
+
 # TypeScript build info
 *.tsbuildinfo
 
