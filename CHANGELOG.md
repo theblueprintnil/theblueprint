@@ -22,6 +22,12 @@ All notable changes to this project are documented here. The format follows
   `AGENT_API_TOKEN`/`AGENT_SERVICE_TOKEN` pairing is no longer referenced.
 - `web/.env.example` documents the two key-source options for agent JWT signing.
 
+### Fixed
+
+- `web/package.json`: declared the lazily-imported AI SDKs (`openai`, `@anthropic-ai/sdk`) as
+  `optionalDependencies` — they previously resolved only via a parent-directory `node_modules`
+  on the workstation, failing Vercel's clean-install typecheck with TS2307.
+
 ## [0.1.0] — 2026-09
 
 ### Added
