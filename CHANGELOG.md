@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [SemVer](https://semver.org/).
 
-## [Unreleased] — 2026-09-22
+## [Unreleased] — 2026-09-23
 
 ### Added
 
@@ -12,6 +12,10 @@ All notable changes to this project are documented here. The format follows
   and `docs/notes/` (relocated the Clerk setup prompt out of the repo root).
 - `AGENT_INTERNAL_JWT_KEY` inline PEM support in `web/src/lib/agent/agent-jwt.ts` so the
   web→engine signing key can be supplied as a Vercel env var; unit test coverage added.
+- `keys/internal-web.public.pem` committed so agent-engine can verify web→engine JWTs via
+  `AGENT_PINNED_PEM_DIR`; private keys stay out of the repository.
+- First Vercel preview deployment of `web` (CLI-created project `blueprint-web`, not yet
+  git-connected); deployment session recorded in `.cline/memory/`.
 
 ### Changed
 
@@ -21,6 +25,8 @@ All notable changes to this project are documented here. The format follows
   Directory `web/` / `agent-engine/`) and the current JWT-only engine auth — the removed
   `AGENT_API_TOKEN`/`AGENT_SERVICE_TOKEN` pairing is no longer referenced.
 - `web/.env.example` documents the two key-source options for agent JWT signing.
+- `.gitignore`: excludes private JWT keys (`keys/*.private.pem`) and the local-only Vercel
+  deploy notes that hold live credentials.
 
 ### Fixed
 
