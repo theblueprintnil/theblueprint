@@ -46,3 +46,6 @@ Desktop.ini
 
 # Vercel
 .vercel
+
+# Local-only deploy notes (holds live credentials - never commit)
+VERCEL-DEPLOYMENT.md
