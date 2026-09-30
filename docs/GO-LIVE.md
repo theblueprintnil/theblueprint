@@ -80,22 +80,42 @@ npm run preflight -- --prod       # enforce live keys (Clerk pk_/sk_live_, Strip
 - To run a classic Celery worker off-Vercel against the same queues, switch the broker to `vercel-poll://` (see `agent-engine/README.md`).
 - `npx prisma db seed` loads a demo tenant; leaving it out of production is the default.
 
-## Post-launch — A2A governance track
+## A2A governance — staged major-track release gate
 
-Launch does not depend on the A2A governance work, but the deviations below are live in
-production the moment the gateway is reachable. They are tracked in
-`docs/a2a/LAYER-STATUS.md` and must be closed before any external agent is onboarded.
+The web product cannot launch until the internal web-to-engine trust boundary and
+tenant-isolation controls below are verified. External A2A agents remain disabled until the
+external-agent activation gate is complete and evidenced. Internal web dispatch and external
+A2A ingress are distinct trust boundaries: the former uses the web dispatcher's short-lived
+RS256 JWTs and pinned public verification material; the latter requires separately onboarded
+external identities and JWKS verification. Neither path accepts a static bearer token.
 
-| Deviation | Live risk | Target |
-|---|---|---|
-| The gateway authenticates with one shared static bearer (`AGENT_API_TOKEN` / `AGENT_SERVICE_TOKEN`) | No agent attribution, no scopes, no rotation; one leak grants everything | M1, ADR-0002 |
-| The gateway resolves the organization from the request body and reads over the privileged `DATABASE_URL` | Bypasses the RLS guarantee that `docs/SECURITY.md` establishes, and violates the `.clinerules` sequence | M1, gap G1 |
-| No age model, so no tier can be computed | A minor's content path is identical to an adult's | M1, ADR-0006 |
-| Compliance evaluates but never blocks | A `HIGH` finding does not prevent publication | M3, P5 |
-| No cost breaker or cross-process rate limit | Unbounded per-task spend and no tenant-level throttle | M4, P7 |
+### Web launch gate — internal M2 dispatch
 
-Order matters: agent identity and ingress remediation first, because every later control
-depends on knowing who the caller is and which tenant they act for.
+- [ ] The engine verifies the web dispatcher's RS256 JWT by `kid`, issuer, audience, expiry,
+  required claims, scopes, and registered tenant/org binding; no verification keys configured
+  fails closed.
+- [ ] Valid JWT dispatch succeeds, while expired, malformed, unsigned, tampered, wrong
+  issuer/audience/algorithm, and unknown-`kid` JWTs fail before parameter parsing or dispatch.
+- [ ] `AGENT_API_TOKEN` and `AGENT_SERVICE_TOKEN` are absent from deployed configuration and
+  cannot authenticate; the engine uses public verification material only.
+- [ ] The web Server Action completes the authorization sequence before dispatch: server-side
+  user authentication, organization membership and canonical role, entitlement, and
+  RLS-bound data access. The engine resolves tenant context only from verified claims and uses
+  the RLS-bound `app_agent` request store.
+- [ ] The preflight `--probe` validates JWT authentication against the deployed engine, and
+  the A2A audit ledger records the authenticated actor, organization, action, target, and
+  outcome for dispatch and sensitive state transitions.
+- [ ] The evidence links are recorded in `docs/a2a/LAYER-STATUS.md` and ADR-0002 before the
+  production launch decision.
+
+### External A2A activation gate
+
+External A2A ingress remains disabled after the web launch until all of the following are
+verified: partner identity, issuer, JWKS, registration, scope subset, quota, and depth limits;
+age-tier and guardian controls for every in-scope athlete; blocking compliance for automated
+publishing; per-task cost breakers and cross-process tenant rate limits; and contract,
+cross-tenant, and audit-attribution evidence. These controls are activation-blocking for
+external agents, not a reason to weaken or defer the internal M2 launch gate.
 
 ### Gates for each milestone
 

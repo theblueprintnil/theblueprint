@@ -32,7 +32,7 @@ configuration change rather than a rewrite.
 | ADR | Decision |
 |---|---|
 | `0001` | JSON-RPC 2.0 at the agent-engine gateway is the A2A transport |
-| `0002` | Scoped JWT agent identity replaces the shared static bearer token |
+| `0002` | JWT-only scoped agent identity with separately gated internal and external ingress |
 | `0003` | Versioned policy packs with an in-repo evaluator, not OPA or Neo4j |
 | `0004` | A hash-chained audit ledger for agent operations |
 | `0005` | Redis for the semantic cache, Postgres plus pgvector for embeddings |
