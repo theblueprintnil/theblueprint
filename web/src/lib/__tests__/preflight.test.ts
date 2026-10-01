@@ -68,6 +68,11 @@ describe('checkAppConnectionPairing', () => {
     expect(checkAppConnectionPairing(makeEnv()).status).toBe('pass')
   })
 
+  it('accepts the Supavisor project-suffixed app_user username', () => {
+    const result = checkAppConnectionPairing(makeEnv({ web: { DATABASE_URL_APP: APP_POOLED } }))
+    expect(result.status).toBe('pass')
+  })
+
   it('fails when the passwords differ', () => {
     const result = checkAppConnectionPairing(makeEnv({ web: { APP_DB_PASSWORD: 'different' } }))
     expect(result.status).toBe('fail')

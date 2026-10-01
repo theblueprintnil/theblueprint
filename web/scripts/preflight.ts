@@ -183,7 +183,7 @@ async function main(): Promise<void> {
   console.log(`blueprint preflight${prod ? ' (prod mode)' : ''}`)
   const webEnv = loadEnv(path.join(process.cwd(), '.env'))
   const engineFile = path.join(process.cwd(), '..', 'agent-engine', '.env')
-  const engineEnv = loadEnv(engineFile)
+  const engineEnv = parseEnvFile(engineFile)
   const results = runPreflight({
     web: webEnv,
     engine: engineEnv,

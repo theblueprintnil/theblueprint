@@ -132,12 +132,12 @@ export function checkAppConnectionPairing(env: PreflightEnvSource): PreflightRes
       detail: 'DATABASE_URL_APP is missing or not a parsable URL',
     }
   }
-  if (url.username !== 'app_user') {
+  if (url.username !== 'app_user' && !/^app_user\.[a-z0-9]+$/i.test(url.username)) {
     return {
       id: 'app-connection',
       label,
       status: 'fail',
-      detail: `expected app_user as user, found "${url.username}"`,
+      detail: `expected app_user (optionally project-suffixed) as user, found "${url.username}"`,
     }
   }
   const password = env.web.APP_DB_PASSWORD?.trim()
