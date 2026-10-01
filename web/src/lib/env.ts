@@ -34,12 +34,12 @@ export const ENV_SPECS: EnvVarSpec[] = [
   {
     name: 'NEXT_PUBLIC_SUPABASE_URL',
     tier: 'reserved',
-    description: 'Supabase project URL (used from Phase 2 onward)',
+    description: 'Supabase project URL for storage and realtime access',
   },
   {
-    name: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    name: 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
     tier: 'reserved',
-    description: 'Supabase anon key (used from Phase 2 onward)',
+    description: 'Supabase publishable key for browser storage and realtime access',
   },
   {
     name: 'SUPABASE_SERVICE_ROLE_KEY',

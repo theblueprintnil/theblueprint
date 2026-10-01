@@ -30,8 +30,8 @@ npx prisma db seed          # demo data
 | `APP_DB_PASSWORD`                    | yes      | Password applied to the `app_user` role by `npm run db:rls`                 |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`  | yes      | Clerk publishable key (browser SDK; `pk_…`) — required by `clerkMiddleware` |
 | `CLERK_SECRET_KEY`                   | yes      | Clerk secret key (server-only; never expose to the browser)                 |
-| `NEXT_PUBLIC_SUPABASE_URL`           | reserved | Placeholder for the planned Supabase migration (Phase 2+)                   |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`      | reserved | Placeholder for the Supabase browser client                                 |
+| `NEXT_PUBLIC_SUPABASE_URL`             | reserved | Supabase project URL for the storage/realtime client                       |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | reserved | Publishable key for browser storage/realtime (safe to expose)              |
 | `SUPABASE_SERVICE_ROLE_KEY`          | reserved | Server-only Supabase key; never expose to the client                        |
 | `SESSION_SECRET`                     | reserved | Future signing secret for stateless session tokens                          |
 | `STRIPE_SECRET_KEY`                  | billing  | Stripe API secret key (server-only; never expose to the browser)            |
