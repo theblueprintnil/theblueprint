@@ -131,6 +131,12 @@ task against the ledger (P1 rule 8). `_enforce` additionally verifies the token'
 a subset of the `AgentRegistration.scopes` row and honors the registration's `maxDepth`,
 closing the membership and role steps of the `.clinerules` sequence for agent callers.
 
+## Release Governance (2026-09-30)
+
+This architectural shift enables the staged major-track release gate:
+1. **Web Launch Gate:** The product launch is blocked on verifying M2 internal web-to-engine RS256 JWT authentication. The launch requires negative-path/key-rotation evidence, server-side organization authorization, RLS-bound engine request access, and a JWT preflight probe. It also actively verifies that no static-token fallback is present.
+2. **External A2A Activation Gate:** External A2A ingress is independently disabled after the web launch. It will only be activated once partner identity verification, scopes limits, quota limits, cross-process rate limiting, blocking compliance, and audit evidence controls are fully verified (via JWKS).
+
 ## References
 
 - `agent-engine/agent_engine/api.py` — `_authorize`, current shared-secret check

@@ -33,8 +33,8 @@ no caller can act outside the authority it was granted.
    task. Reuse within a different task is rejected.
 9. Internal hops use a pinned PEM; external callers use JWKS. The two key sets are
    distinct, so a partner key can never mint an internal identity.
-10. The shared static bearer is supported during a deprecation window only, is logged
-    as deprecated on use, and is removed once every deployed client has migrated.
+10. The shared static bearer token has been permanently removed; there is no fallback
+    to shared-secret authentication.
 
 ### Violation semantics
 
