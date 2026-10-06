@@ -1,0 +1,236 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-06T17:45:54.641Z",
+  "files": [
+    {
+      "path": ".cline/personas/brand-intake-assistant.json",
+      "agent": "brand-intake-assistant",
+      "hash": "5fdfa4f7f9351d180d2de1895f0447ab70d973dc0119fb51df6bb0c224a169bb"
+    },
+    {
+      "path": ".cline/personas/brand-safety-guardrail.json",
+      "agent": "brand-safety-guardrail",
+      "hash": "cd309204e0d9d4168290602519c985e530529f1fad48830a3afbeff569a85001"
+    },
+    {
+      "path": ".cline/personas/campaign-manager.json",
+      "agent": "campaign-manager",
+      "hash": "201827f3455e39e8e09506b36078bb12388d3342010af269f15a22830b631027"
+    },
+    {
+      "path": ".cline/personas/content-compliance-reviewer.json",
+      "agent": "content-compliance-reviewer",
+      "hash": "bd35bae3ef8f18fe0c172164b32f6bdcb12b86a5e1868946c7a7189b0e6c91f5"
+    },
+    {
+      "path": ".cline/personas/content-strategist.json",
+      "agent": "content-strategist",
+      "hash": "86dad1f5de906c81a30a408094e316f630ad77d21b58ebdc734f3586ae067665"
+    },
+    {
+      "path": ".cline/personas/nil-performance-analyst.json",
+      "agent": "nil-performance-analyst",
+      "hash": "56221d08c1cba3ce7cb7953872d31c4da40ed16994d4e3891ca46248e8008a45"
+    },
+    {
+      "path": ".cline/personas/publishing-assistant.json",
+      "agent": "publishing-assistant",
+      "hash": "d1582c0bb772a1b11031ae02f8d092c97f0fbce16c26d25c31101e1791db24ea"
+    },
+    {
+      "path": ".cline/personas/sponsor-crm-assistant.json",
+      "agent": "sponsor-crm-assistant",
+      "hash": "145a3fc2b19ea143a6ff72e2690e9b5e196b1957efcf31e58208a0c0be103101"
+    },
+    {
+      "path": ".cline/personas/workflow-orchestrator.json",
+      "agent": "workflow-orchestrator",
+      "hash": "d160a0a2303d1e848267062499fa8c426c765db5430b2e6ddd738b92d49ad1f2"
+    },
+    {
+      "path": ".cline/skills/brand-intake-assistant/SKILL.md",
+      "agent": "brand-intake-assistant",
+      "hash": "439eb91932f4caa34310dad01beee82322f28e660a3c2a3cfc0d507f78aa6a81"
+    },
+    {
+      "path": ".cline/skills/brand-safety-guardrail/SKILL.md",
+      "agent": "brand-safety-guardrail",
+      "hash": "564d1cc50ca03eed07aa16a1fa39f7af219e14764d984ef17e350430071d5e8d"
+    },
+    {
+      "path": ".cline/skills/campaign-manager/SKILL.md",
+      "agent": "campaign-manager",
+      "hash": "7cd344b15b03e8a29feb4264af985a0d5ba97d2b27220484d8f0365fc9e33c71"
+    },
+    {
+      "path": ".cline/skills/content-compliance-reviewer/SKILL.md",
+      "agent": "content-compliance-reviewer",
+      "hash": "8ee75212cc9f66e7f0acd9928844d715436209276516b2ae337d33d583edf851"
+    },
+    {
+      "path": ".cline/skills/content-strategist/SKILL.md",
+      "agent": "content-strategist",
+      "hash": "71e8cd32d730f0c437ac6d3ede78dd89f837a381728546589f54929e65c7d20d"
+    },
+    {
+      "path": ".cline/skills/nil-performance-analyst/SKILL.md",
+      "agent": "nil-performance-analyst",
+      "hash": "14a667be4e66525bbdc090a21cdfcbdb8b49737f0c198592df3089b2e2ae9174"
+    },
+    {
+      "path": ".cline/skills/publishing-assistant/SKILL.md",
+      "agent": "publishing-assistant",
+      "hash": "8fa2e3c5b23bb3de5d56387dbd9e54fd4cea265e4936a27a440132a79c2ee341"
+    },
+    {
+      "path": ".cline/skills/sponsor-crm-assistant/SKILL.md",
+      "agent": "sponsor-crm-assistant",
+      "hash": "0df4c7c365012b919338790605e6fad799e5f8dbf3a807a052cadbac3240e973"
+    },
+    {
+      "path": ".cline/skills/workflow-orchestrator/SKILL.md",
+      "agent": "workflow-orchestrator",
+      "hash": "0ab9303317fe667c592b471b65ae5625d5c3068c298d1a0eadf8b0aa8190dc6f"
+    },
+    {
+      "path": ".cline/workflows/agent-system-workflow.md",
+      "agent": "system",
+      "hash": "7c592cf6456a6115ab65232fc30d4c55ac06e9ae0ffc9271d55be6ea81fe1087"
+    },
+    {
+      "path": "AGENTS.md",
+      "agent": "system",
+      "hash": "8f077b6bd35c601e3e6f91f38dc703c87882f6a00575f9ac9ecccf79d0587b14"
+    },
+    {
+      "path": "api/model_routes.json",
+      "agent": "system",
+      "hash": "755dcb4eefb4908514b1f68ac310e5a5f4541d01bff6e7357e0e0c29d874bbc7"
+    },
+    {
+      "path": "api/prompt_config.json",
+      "agent": "system",
+      "hash": "9f7a17e4d7d04b7862e32662a94fedf3af8e139c02d8dd7d5634053be2e8d5c9"
+    },
+    {
+      "path": "api/workflow_config.json",
+      "agent": "system",
+      "hash": "67658353f20609c8b9dbabb3b8783276ddf88778d3cc426d8b4d23934f56376a"
+    },
+    {
+      "path": "commands/brand-intake-assistant.md",
+      "agent": "brand-intake-assistant",
+      "hash": "b706c67ee45c6d418d1cc30728271e2dd34eb250e984e8ad549c1db0021560c6"
+    },
+    {
+      "path": "commands/brand-safety-guardrail.md",
+      "agent": "brand-safety-guardrail",
+      "hash": "5e6b8b27a1467692449cb509935c9fb12f9160472b187e7c213263fa523f126d"
+    },
+    {
+      "path": "commands/campaign-manager.md",
+      "agent": "campaign-manager",
+      "hash": "33530581d0ee1ade3b1fb5a5c3df20cbc7ae625ba57bf6b27306164ff7bf500a"
+    },
+    {
+      "path": "commands/content-compliance-reviewer.md",
+      "agent": "content-compliance-reviewer",
+      "hash": "77024833b4823ab125b71ba472b77257cb4af254ff1004160bda5173638b6dd0"
+    },
+    {
+      "path": "commands/content-strategist.md",
+      "agent": "content-strategist",
+      "hash": "8dfa97699a9a700de74524058d568bfe8de12f047128e37153165cb42bca8392"
+    },
+    {
+      "path": "commands/nil-performance-analyst.md",
+      "agent": "nil-performance-analyst",
+      "hash": "7b358701605611824b44f3755f57b168f57009b8083829cfaee9af8cd009b9d4"
+    },
+    {
+      "path": "commands/publishing-assistant.md",
+      "agent": "publishing-assistant",
+      "hash": "68a750199b5b817494385f70a0456e2e85d2c9b088dfa05f5934ebb671493a87"
+    },
+    {
+      "path": "commands/sponsor-crm-assistant.md",
+      "agent": "sponsor-crm-assistant",
+      "hash": "3ef147049443ab6de2210b28de0615c56044a7f4b10c4ef4c9cfcf5b02347a71"
+    },
+    {
+      "path": "commands/workflow-orchestrator.md",
+      "agent": "workflow-orchestrator",
+      "hash": "a03c260e648f6c83124cc086c533eb59bd7f5da862457369f5673d418f8c3ca4"
+    },
+    {
+      "path": "prompts/01_brand_intake_assistant.md",
+      "agent": "brand-intake-assistant",
+      "hash": "a4d75b4f9a43fad6ab7e4c74474d7f05ca5fa6f9eda1e0d9afed2e80962a5223"
+    },
+    {
+      "path": "prompts/02_content_strategist.md",
+      "agent": "content-strategist",
+      "hash": "66d780a710c02a64a320454126e303d717ca27cf5e1d57291a7d4f8374a1a484"
+    },
+    {
+      "path": "prompts/03_campaign_manager.md",
+      "agent": "campaign-manager",
+      "hash": "c46e0d846b5b16309f537b9b89bf5f313cb75fcf9d4d123319fc37bc8e764d23"
+    },
+    {
+      "path": "prompts/04_content_compliance_reviewer.md",
+      "agent": "content-compliance-reviewer",
+      "hash": "7b5c1838673c5dc4d766a971f525ff4a15d003628dfb9d9dfd1b5edc93eaab9d"
+    },
+    {
+      "path": "prompts/05_publishing_assistant.md",
+      "agent": "publishing-assistant",
+      "hash": "08236ed236682f914bef4a75f906199296b9bc27c56a30c6f6708f4335c8b727"
+    },
+    {
+      "path": "prompts/06_sponsor_crm_assistant.md",
+      "agent": "sponsor-crm-assistant",
+      "hash": "194c09b16bcc816cf228ee92ef924fb1dab3c8d0c06eee0b262a9731d698c2fe"
+    },
+    {
+      "path": "prompts/07_nil_performance_analyst.md",
+      "agent": "nil-performance-analyst",
+      "hash": "58b1a9d5fd1777ce5fd9fca965ee45f11f03b08ca43220035aa6aa34136f6d8d"
+    },
+    {
+      "path": "prompts/08_brand_safety_guardrail.md",
+      "agent": "brand-safety-guardrail",
+      "hash": "73f05c0c54a4615db19346fdc69ddcba9f7aea4864974d23ddb89faf1c996c0e"
+    },
+    {
+      "path": "prompts/09_workflow_orchestrator.md",
+      "agent": "workflow-orchestrator",
+      "hash": "6631ab9836d3eb893885d89eeafc6ffdd7ed31b728144ff5983145cdb0edf85e"
+    },
+    {
+      "path": "templates/approval_review.json",
+      "agent": "content-compliance-reviewer",
+      "hash": "08f31ac9302b83f282dba8d409bbdd93897d6f49ef89c26fd639498747c26f46"
+    },
+    {
+      "path": "templates/athlete_profile.json",
+      "agent": "brand-intake-assistant",
+      "hash": "85e906dc7cdfe2f986f7bb26ad742f1e15839a15849d545aaf37728408f14ed6"
+    },
+    {
+      "path": "templates/campaign_brief.json",
+      "agent": "campaign-manager",
+      "hash": "e92fb4e91e74a2130f692d3d88507c02fa3e1061ff85f2936b72c18fac06f116"
+    },
+    {
+      "path": "templates/content_draft.json",
+      "agent": "content-strategist",
+      "hash": "a766fafd0fa42546729fa67566b04839f5a9f7ab8d072ae600e0f655f85afccf"
+    },
+    {
+      "path": "templates/performance_report.json",
+      "agent": "nil-performance-analyst",
+      "hash": "e6b9f64a2234ae5633330d8fb3ece64b4d619b63be79723d0d94daaa2f46bb36"
+    }
+  ]
+}

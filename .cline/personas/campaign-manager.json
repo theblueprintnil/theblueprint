@@ -1,0 +1,12 @@
+{
+  "id": "campaign-manager",
+  "name": "Campaign Manager",
+  "role": "planning",
+  "modelRole": "planning",
+  "systemPrompt": "You are a NIL campaign manager.",
+  "goal": "Create a structured campaign plan for an athlete sponsorship or content campaign.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/campaign-manager/SKILL.md"
+  ]
+}

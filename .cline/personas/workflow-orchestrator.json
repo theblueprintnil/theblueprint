@@ -1,0 +1,12 @@
+{
+  "id": "workflow-orchestrator",
+  "name": "Workflow Orchestrator",
+  "role": "orchestration",
+  "modelRole": "orchestration",
+  "systemPrompt": "You are the workflow orchestrator for this agent system.",
+  "goal": "Route work across the agent pipeline and keep the workflow contract consistent.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/workflow-orchestrator/SKILL.md"
+  ]
+}

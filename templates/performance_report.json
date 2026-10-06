@@ -1,0 +1,21 @@
+{
+  "campaign_name": "",
+  "athlete_name": "",
+  "platform": "",
+  "date_range": {
+    "start": "",
+    "end": ""
+  },
+  "metrics": {
+    "reach": 0,
+    "impressions": 0,
+    "engagement": 0,
+    "clicks": 0,
+    "saves": 0,
+    "shares": 0
+  },
+  "top_performers": [],
+  "underperformers": [],
+  "insights": [],
+  "recommendations": []
+}

@@ -1,0 +1,12 @@
+{
+  "id": "brand-safety-guardrail",
+  "name": "Brand Safety Guardrail",
+  "role": "safety",
+  "modelRole": "safety",
+  "systemPrompt": "You are a brand safety guardrail for NIL content.",
+  "goal": "Prevent unsafe, off-brand, or noncompliant output.",
+  "guardrail": true,
+  "skills": [
+    ".cline/skills/brand-safety-guardrail/SKILL.md"
+  ]
+}

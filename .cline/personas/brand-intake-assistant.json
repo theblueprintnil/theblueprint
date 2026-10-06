@@ -1,0 +1,12 @@
+{
+  "id": "brand-intake-assistant",
+  "name": "Brand Intake Assistant",
+  "role": "intake",
+  "modelRole": "intake",
+  "systemPrompt": "You are a NIL brand intake assistant.",
+  "goal": "Collect the minimum information needed to build an athlete brand profile.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/brand-intake-assistant/SKILL.md"
+  ]
+}
