@@ -26,11 +26,41 @@ npm run preflight -- --prod       # enforce live keys (Clerk pk_/sk_live_, Strip
 
 ## Phase 2 — Schema + RLS bootstrap _(workstation)_
 
-- [ ] Point `web/.env` `DATABASE_URL` at the **direct** string; choose `APP_DB_PASSWORD`
-- [ ] `npx prisma db push`
+- [ ] Point `web/.env` `DATABASE_URL` at the **direct** string; choose `APP_DB_PASSWORD` (see *Create the app login roles* below)
+- [ ] `npx supabase db push` — schema bootstrap (the Prisma-schema path `npx prisma db push` is superseded; all DDL lives in `supabase/migrations`)
 - [ ] `npm run db:rls`
 - [ ] Decision: skip `npx prisma db seed` unless the demo tenant (Carter Athletics) is wanted in production
 - [ ] `npm run preflight --connect` — `app_user` connects, database identity confirmed
+
+### Create the app login roles (`app_user`, `app_agent`)
+
+Both are login roles sharing one password — the `APP_DB_PASSWORD` from `web/.env`:
+
+| Role | Consumed by | Connection string |
+|------|-------------|-------------------|
+| `app_user` | web runtime (RLS-bound `prismaApp`) | `DATABASE_URL_APP` — `postgresql://app_user.<ref>:<APP_DB_PASSWORD>@...pooler.supabase.com:6543/postgres` |
+| `app_agent` | agent-engine gateway request path | `AGENT_DATABASE_URL` — `postgresql://app_agent:<APP_DB_PASSWORD>@...pooler.supabase.com:6543/postgres?pgbouncer=true` |
+
+**Workstation path (preferred).** Set in `web/.env`:
+
+```
+APP_DB_PASSWORD="<APP_DB_PASSWORD_PLACEHOLDER>"
+```
+
+Then run `npm run db:rls` from `web/`. `scripts/apply-rls.ts` creates each missing role via `CREATE ROLE <name> LOGIN PASSWORD '<APP_DB_PASSWORD>'`, refreshes the password via `ALTER ROLE` when the role already exists, then applies every grant, `FORCE ROW LEVEL SECURITY` statement, and policy from `prisma/rls.sql`. This step requires a DDL-capable connection: the **direct/session** string (`db.<ref>.supabase.co:5432`), or — where the IPv6-only direct host is unreachable — the **session-mode pooler** (`aws-0-us-east-1.pooler.supabase.com:5432` with username `postgres.<ref>`). `CREATE ROLE` and DDL fail through the transaction pooler (port 6543).
+
+**Dashboard path (alternative).** When not running from the workstation, execute in the Supabase SQL editor:
+
+```sql
+create role app_user  login password '<APP_DB_PASSWORD_PLACEHOLDER>';
+create role app_agent login password '<APP_DB_PASSWORD_PLACEHOLDER>';
+```
+
+On the local Docker/Prisma foundation, `npm run db:rls` must still run afterward — it detects the existing roles, refreshes the password, and applies the `prisma/rls.sql` grants (schema usage, table CRUD, sequences, policies). On the migrated Supabase remote, do **not** run it — see the compatibility note.
+
+**Compatibility note (2026-10-09).** `prisma/rls.sql` grants target the legacy Prisma-native CamelCase tables (`"Organization"`, `"Membership"`, …). The remote built from `supabase/migrations` uses snake_case tables (`organizations`, `organization_members`, `ai_runs`, …) that carry their own RLS policies, and contains no grants to `app_user`/`app_agent` — `npm run db:rls` against it fails on the first table grant (undefined table). Until the web app migrates onto the Supabase foundation (see `docs/SECURITY.md`, "two data foundations"), create the roles on the remote via the SQL above only; the roles are connection identities for `DATABASE_URL_APP` / `AGENT_DATABASE_URL`. The SQL can also be applied from the workstation without the DB password via the Management API — `POST https://api.supabase.com/v1/projects/<ref>/database/query` with an `Authorization: Bearer <personal-access-token>` header and body `{"query": "<sql>"}` — the same channel the dashboard SQL editor uses (this is how the roles were created on 2026-10-09).
+
+The real `APP_DB_PASSWORD` never enters this document or any committed file; `<APP_DB_PASSWORD_PLACEHOLDER>` stays a placeholder.
 
 ## Phase 3 — agent-engine on Vercel
 
