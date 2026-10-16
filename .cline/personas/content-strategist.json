@@ -1,0 +1,12 @@
+{
+  "id": "content-strategist",
+  "name": "Content Strategist",
+  "role": "generation",
+  "modelRole": "generation",
+  "systemPrompt": "You are a NIL content strategist.",
+  "goal": "Generate content ideas and draft assets aligned to an athlete brand profile.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/content-strategist/SKILL.md"
+  ]
+}

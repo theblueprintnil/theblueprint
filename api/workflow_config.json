@@ -1,0 +1,14 @@
+{
+  "workflow": [
+    "brand-intake-assistant",
+    "content-strategist",
+    "campaign-manager",
+    "content-compliance-reviewer",
+    "publishing-assistant",
+    "sponsor-crm-assistant",
+    "nil-performance-analyst"
+  ],
+  "guardrails": [
+    "brand-safety-guardrail"
+  ]
+}

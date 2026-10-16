@@ -1,0 +1,49 @@
+{
+  "prompts": [
+    {
+      "id": "brand-intake-assistant",
+      "file": "prompts/01_brand_intake_assistant.md",
+      "model_role": "intake"
+    },
+    {
+      "id": "content-strategist",
+      "file": "prompts/02_content_strategist.md",
+      "model_role": "generation"
+    },
+    {
+      "id": "campaign-manager",
+      "file": "prompts/03_campaign_manager.md",
+      "model_role": "planning"
+    },
+    {
+      "id": "content-compliance-reviewer",
+      "file": "prompts/04_content_compliance_reviewer.md",
+      "model_role": "review"
+    },
+    {
+      "id": "publishing-assistant",
+      "file": "prompts/05_publishing_assistant.md",
+      "model_role": "publishing"
+    },
+    {
+      "id": "sponsor-crm-assistant",
+      "file": "prompts/06_sponsor_crm_assistant.md",
+      "model_role": "crm"
+    },
+    {
+      "id": "nil-performance-analyst",
+      "file": "prompts/07_nil_performance_analyst.md",
+      "model_role": "analytics"
+    },
+    {
+      "id": "brand-safety-guardrail",
+      "file": "prompts/08_brand_safety_guardrail.md",
+      "model_role": "safety"
+    },
+    {
+      "id": "workflow-orchestrator",
+      "file": "prompts/09_workflow_orchestrator.md",
+      "model_role": "orchestration"
+    }
+  ]
+}

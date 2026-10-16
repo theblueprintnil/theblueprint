@@ -1,0 +1,13 @@
+{
+  "routes": {
+    "intake": "brand-intake-assistant",
+    "generation": "content-strategist",
+    "planning": "campaign-manager",
+    "review": "content-compliance-reviewer",
+    "publishing": "publishing-assistant",
+    "crm": "sponsor-crm-assistant",
+    "analytics": "nil-performance-analyst",
+    "safety": "brand-safety-guardrail",
+    "orchestration": "workflow-orchestrator"
+  }
+}

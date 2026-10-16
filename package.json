@@ -1,5 +1,5 @@
 {
-  "name": "the-blueprint---nil-athlete-promotion-site",
+  "name": "my-nil",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,6 +13,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "supabase": "^2.118.0"
+    "supabase": "^2.120.0"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.2"
   }
 }

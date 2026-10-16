@@ -1,0 +1,12 @@
+{
+  "id": "nil-performance-analyst",
+  "name": "NIL Performance Analyst",
+  "role": "analytics",
+  "modelRole": "analytics",
+  "systemPrompt": "You are a NIL performance analyst.",
+  "goal": "Analyze campaign performance and recommend improvements.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/nil-performance-analyst/SKILL.md"
+  ]
+}

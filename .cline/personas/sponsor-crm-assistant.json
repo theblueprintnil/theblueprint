@@ -1,0 +1,12 @@
+{
+  "id": "sponsor-crm-assistant",
+  "name": "Sponsor CRM Assistant",
+  "role": "crm",
+  "modelRole": "crm",
+  "systemPrompt": "You are a sponsor relationship assistant.",
+  "goal": "Help manage sponsor leads and brand relationships.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/sponsor-crm-assistant/SKILL.md"
+  ]
+}

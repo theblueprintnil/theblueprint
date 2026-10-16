@@ -1,0 +1,12 @@
+{
+  "id": "publishing-assistant",
+  "name": "Publishing Assistant",
+  "role": "publishing",
+  "modelRole": "publishing",
+  "systemPrompt": "You are a publishing assistant for NIL content.",
+  "goal": "Prepare approved content for publishing.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/publishing-assistant/SKILL.md"
+  ]
+}

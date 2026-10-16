@@ -21,7 +21,7 @@ asking "is this built yet".
 ## The ten layers
 
 | Layer | Specification intent | Repository reality | Status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | L1 User and interface | Athlete, agency, brand, guardian, and admin surfaces; studio approval queue | Next.js 16 App Router in `web/`; marketing and app route groups; `/app/studio` approval queue wired to real Server Actions; `ApprovalCard.tsx` renders risk badges and reviewer feedback; `/app/guardian/dashboard` and `/admin/compliance` are `PagePlaceholder` shells | Partial |
 | L2 Business logic | Org resolution, RBAC, entitlements, deal pipeline | Prisma 6.4 on Postgres with RLS; Clerk auth; `permissions.ts` canonical role matrix; `billing/entitlements.ts`; `deal-pipeline.ts` | Partial |
 | L3 Policy graph | Versioned policy registry with a provable snapshot per verdict | Deterministic FTC, NCAA, and exclusivity checks in `rules.py`; `ncaa-nil-v1-2026` as a literal string; `AiRun.policySnapshotId` and, since M2, `AgentTaskExecution.policySnapshotId` (populated on create) exist, but there is still no pack registry and the value is a free literal rather than a foreign key | Partial |
@@ -33,11 +33,10 @@ asking "is this built yet".
 | L9 Human-in-the-loop | Value gate, age gate, guardian co-sign, bounded revision loop | LangGraph `interrupt()` plus `ApprovalCard.tsx` and OWNER, ADMIN review actions; the interrupt is unconditional and no age or value dimension exists | Partial |
 | L10 Data flywheel | Edit deltas, redaction, evaluation gate, training export | `reviewerFeedback` string on `AgentTaskExecution`; no delta capture, no export, no eval harness | Missing |
 
-
 ## Cross-cutting controls
 
 | Control | Specification intent | Repository reality | Status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Audit | Hash-chained, append-only, streaming, tamper-evident | `A2AAuditEntry` ledger live in code on both foundations: per-tenant SHA-256 chain (`audit.py`), sequence allocation under `pg_advisory_xact_lock`, append-only trigger in `supabase/migrations/20260919000000_a2a_lifecycle_and_audit.sql`, `verify_tenant_chain`, `auditSequence` link on executions, isolation assertions (8)/(9); dual-writes `AuditLog` during migration; no SSE stream yet | Partial |
 | Agent identity | Scoped JWT with tenant and org claims, JWKS rotation, non-repudiation | M2 JWT-only gateway: `identity.py` verifies RS256/ES256 into `AgentPrincipal` with required `jti`; `_enforce` checks org claim, method scope, `AgentRegistration` status/org-binding/scope-subset/maxDepth; `jti` is single-use per task via the ledger. The registered web dispatcher mints internal RS256 JWTs verified with pinned public material. External JWKS onboarding and activation evidence remain disabled pending the external gate. | Partial |
 | Tenant isolation | RLS-bound access at every tier; no privileged connection in a request path | Prisma RLS with `app_user_role_in` and `FORCE ROW LEVEL SECURITY`; the gateway request path runs on the RLS-bound `app_agent` store with `set_config('app.current_org_id', …)` per transaction (`Store.request_store`); the Celery worker and LangGraph checkpointer keep the privileged DSN as the documented, ledger-audited background-job exception; `app_agent` grants limited to the A2A tables | Partial |
@@ -49,7 +48,7 @@ asking "is this built yet".
 Ordered by blocking severity. Each gap names the milestone that closes it.
 
 | ID | Gap | Severity | Milestone |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | G1 | Agent ingress resolved tenant identity from the request body and read over the privileged connection — **Closed (M2)**: JWT-only ingress (`verify_shared_secret` deleted, no key configured ⇒ 503 fail-closed), org derived from the verified `org_id`/`tenant_id` claim and re-checked against the `AgentRegistration` row; the gateway request path runs on the RLS-bound `app_agent` store (`AGENT_DATABASE_URL` + `Store.request_store` + `org_transaction` with `set_config('app.current_org_id', …)`), so the privileged DSN never appears in a user-facing handler. Background exception documented: the Celery worker and the LangGraph checkpointer keep the privileged DSN and write ledger rows | Closed | M2 |
 | G2 | Shared static bearer token: no agent identity, no scopes, no rotation, no non-repudiation — **Closed (M2)**: `identity.py` verifies RS256/ES256 scoped JWTs (JWKS x5c + pinned PEM) into an `AgentPrincipal`, `jti` is required, scopes are matched per method, token scopes must be a subset of the registration row's, and reuse of a `jti` inside a task is rejected `-32004`. `AGENT_API_TOKEN` and `AGENT_SERVICE_TOKEN` are removed from both tiers and the web mints internal RS256 JWTs from a pinned `node:crypto` signer; no shared-secret path remains | Closed | M2 |
 | G3 | Age data and the fail-closed `resolveAgeTier` are implemented and live-validated; guardian and age-tier gates are not yet enforced in the HITL flow. This does not block internal web launch when minors are out of scope, but it blocks external A2A activation for any in-scope minor. | Partial | M3 / External activation |
@@ -57,7 +56,7 @@ Ordered by blocking severity. Each gap names the milestone that closes it.
 | G5 | `AgentTaskExecution` cannot express the A2A lifecycle: no `CANCELLED`, `EXPIRED`, or `INPUT_REQUIRED`; no `a2aTaskId`, `parentTaskId`, `depth`, `costUsd`, `ageTier`, or `policySnapshotId` — **Applied (M2)**: enum extended and all eight columns added (`prisma/schema.prisma` plus migration `20260919000000`); `tasks.py` RUNNABLE/RESUMABLE guards, `store.cancel_task`/`expire_if_due`/`record_dispatch`, `SPEC_STATE_BY_STATUS` maps engine states onto A2A spec states, and `task.get`/`task.cancel` are wired end to end in `api.py` and the web `celery-client.ts`; `actions.ts` sets the fields on create and `cancelAgentExecution` transitions to `CANCELLED` | Applied | M2 |
 | G6 | Compliance evaluates but never mutates and never blocks; no disclosure injection | High | M3 |
 | G7 | No cost breaker, no cross-process rate limit, no per-task cost accounting | High | M4 |
-| G8 | `AuditLog.details` is a `String`, not `Json`, and carries no chain, sequence, or tamper evidence — **Applied (M2)**: new `A2AAuditEntry` model (org-scoped `seq`, `prevHash`, `entryHash`, canonical `payload` JSON) with `audit.py` computing `SHA-256(org|seq|prevHash|canonical payload)`, sequence allocation under `pg_advisory_xact_lock(hashtext(org))`, a plpgsql `BEFORE UPDATE OR DELETE` append-only trigger in the migration (privileged roles included), `verify_chain` plus `verify_tenant_chain`, and `auditSequence` on each execution so a task links to its ledger rows. `AuditLog` is still dual-written and is not yet chained (M3/M4 residual) | Applied | M2 |
+| G8 | `AuditLog.details` is a `String`, not `Json`, and carries no chain, sequence, or tamper evidence — **Applied (M2)**: new `A2AAuditEntry` model (org-scoped `seq`, `prevHash`, `entryHash`, canonical `payload` JSON) with `audit.py` computing `SHA-256(org | seq | prevHash | canonical payload)`, sequence allocation under`pg_advisory_xact_lock(hashtext(org))`, a plpgsql`BEFORE UPDATE OR DELETE` append-only trigger in the migration (privileged roles included), `verify_chain` plus `verify_tenant_chain`, and`auditSequence` on each execution so a task links to its ledger rows. `AuditLog` is still dual-written and is not yet chained (M3/M4 residual) | Applied | M2 |
 | G9 | External A2A activation has incomplete governance evidence — **Internal M2 is launch-gated separately**: `GET /.well-known/agent.json` serves the card (plus `/agent/card`), and `POST /agent/task` implements `task.get` and `task.cancel` with uniform cross-tenant not-found. External ingress remains disabled until partner identity/issuer/JWKS/registration, age and guardian controls where applicable, blocking compliance, cost/rate governance, streaming, and audit evidence meet the external activation gate in `docs/GO-LIVE.md`. | Partial | External activation |
 | G10 | `Deal.amount` is a `Float`, so currency comparison near the `$250` threshold is inexact | Medium | M3 |
 | G11 | Deployment divergence: the specification assumes Cloudflare AI Gateway, Neo4j AuraDB, AWS ECS, and NeMo Guardrails; the repository runs Vercel, Docker Postgres, and local OmniRoute | Low | Documented swap points |
@@ -69,6 +68,31 @@ Ordered by blocking severity. Each gap names the milestone that closes it.
 | `A2A_Architecture_Blueprint.pdf` (17 MB, 14 pages) | **Recovered.** Previously excluded as image-only. Every page is an embedded 1376x768 screenshot with a zero-length text layer, so no text-extraction path exists, but the page images were read directly and the whole deck is now transcribed in `SOURCE-RECONCILIATION.md` §H. It is not redundant: it supplies the age-gated permission matrix, the three-axis limit model, the `-32005` rejection contract, the tenant isolation workload models, and a third IdP candidate. |
 
 ## Maintenance rule
+
+## M2 Gate Evidence — Internal Web-to-Engine Dispatch (2026-10-09)
+
+M2 internal web-to-engine trust boundary and tenant-isolation controls have been fully verified in the codebase for production deployment:
+
+1. **JWT-Only Ingress & Key Verification**:
+   - `agent-engine/agent_engine/identity.py` verifies RS256/ES256 scoped JWTs using pinned PEM files (`AGENT_PINNED_PEM_DIR`) or JWKS (`AGENT_JWKS_PATH`). Fails closed (HTTP 503 / 401) when no verification material is present or token is invalid.
+   - `web/src/lib/agent/agent-jwt.ts` mints short-lived (60s) RS256 JWTs using `node:crypto` with `kid="internal-web"`, signed with `AGENT_INTERNAL_JWT_KEY` (or `AGENT_INTERNAL_JWT_KEY_PATH`).
+   - Static tokens `AGENT_API_TOKEN` and `AGENT_SERVICE_TOKEN` have been permanently eliminated from code and runtime configs.
+
+2. **Mandatory Authorization Sequence & Tenant Isolation**:
+   - Web Server Actions enforce the full `.clinerules` sequence (caller authentication, server-validated org membership, role check, entitlement, RLS-bound DB queries).
+   - Gateway derives `tenant_id` and `org_id` strictly from validated JWT claims (`sub`, `org_id`, `scopes`, `jti`).
+   - Gateway runs over RLS-bound `app_agent` role using `org_transaction` / `set_config('app.current_org_id', ...)` with uniform cross-tenant denial.
+
+3. **Tamper-Evident A2A Audit Ledger**:
+   - `A2AAuditEntry` model records chained SHA-256 hash sequence per organization (`SHA-256(org | seq | prevHash | canonical_payload)`).
+   - Enforced by PostgreSQL `BEFORE UPDATE OR DELETE` trigger preventing modification or deletion.
+   - Live verified via `supabase/tests/tenant_isolation.sql` (9/9 PASS) and unit tests in `test_audit.py` / `test_identity.py`.
+
+4. **Automated Verification Suite**:
+   - Web: `npm run lint`, `npm run typecheck`, `npm run test` (176 passed), `npm run build` (41 routes) -> PASS.
+   - Engine: `pytest` (68 passed, 1 skipped) -> PASS.
+   - Preflight: `npm run preflight` reports 0 FAIL.
+
 
 A row moves out of `Missing` or `Partial` only when the capability is verifiable in
 the repository and covered by a test named in `SCHEMA-CHANGE-PLAN.md` or

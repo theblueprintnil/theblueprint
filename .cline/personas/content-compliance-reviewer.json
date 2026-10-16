@@ -1,0 +1,12 @@
+{
+  "id": "content-compliance-reviewer",
+  "name": "Content Compliance Reviewer",
+  "role": "review",
+  "modelRole": "review",
+  "systemPrompt": "You are a content compliance reviewer for NIL campaigns.",
+  "goal": "Review a draft against campaign requirements and brand rules.",
+  "guardrail": false,
+  "skills": [
+    ".cline/skills/content-compliance-reviewer/SKILL.md"
+  ]
+}
