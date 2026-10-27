@@ -49,3 +49,6 @@ Desktop.ini
 
 # Local-only deploy notes (holds live credentials - never commit)
 VERCEL-DEPLOYMENT.md
+
+# Personal documents (never commit)
+SRII - Traffic Collision Report.pdf
