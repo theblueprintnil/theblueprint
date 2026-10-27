@@ -1,4 +1,4 @@
-# The Blueprint — NIL Athlete Promotion Site
+# My NIL — NIL Athlete Promotion Site
 
 Multi-tenant SaaS that helps NIL athletes land and manage brand deals: athlete profile
 builder, opportunity marketplace, deal workspace, and an AI content studio with

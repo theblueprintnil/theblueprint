@@ -1,0 +1,10 @@
+venv/
+.env
+*.pyc
+__pycache__/
+.migrations/
+Dockerfile
+agent-engine/
+node_modules/
+.git/
+.pytest_cache/
